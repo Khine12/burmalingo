@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
-          npm ci
+          npm install
 
       - name: Type check
         run: |
