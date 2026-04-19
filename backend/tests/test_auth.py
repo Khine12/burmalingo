@@ -18,7 +18,8 @@ def override_db():
 
 app.dependency_overrides[get_db] = override_db
 Base.metadata.create_all(bind=engine)
-client = TestClient(app)
+from starlette.testclient import TestClient
+client = TestClient(app, raise_server_exceptions=True)
 
 def test_health():
     r = client.get("/health")
@@ -27,7 +28,7 @@ def test_health():
 
 def test_register_and_login():
     email = "test_burmalingo@example.com"
-    password = "testpass123"
+    password = "testpass123!"
 
     # Register
     r = client.post("/api/auth/register", json={"email": email, "password": password})
