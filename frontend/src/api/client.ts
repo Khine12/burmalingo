@@ -1,0 +1,81 @@
+import axios from 'axios'
+import type { AuthTokens, User, VocabCard, ReviewResult, TranslationFeedback, UserProgress } from '../types'
+
+const api = axios.create({
+  baseURL: '/api',
+  headers: { 'Content-Type': 'application/json' },
+})
+
+// Attach JWT token to every request automatically
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
+// Redirect to login on 401
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('access_token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(err)
+  }
+)
+
+// Auth
+export const authApi = {
+  register: (email: string, password: string) =>
+    api.post<AuthTokens>('/auth/register', { email, password }),
+
+  login: (email: string, password: string) => {
+    const form = new URLSearchParams()
+    form.append('username', email)
+    form.append('password', password)
+    return api.post<AuthTokens>('/auth/token', form, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+  },
+
+  me: () => api.get<User>('/auth/me'),
+}
+
+// Vocabulary
+export const vocabApi = {
+  getDueCards: (level: number) =>
+    api.get<VocabCard[]>('/vocab/due', { params: { level } }),
+
+  submitReview: (cardId: number, rating: string) =>
+    api.post<ReviewResult>('/vocab/review', { card_id: cardId, rating }),
+}
+
+// Translation practice
+export const translationApi = {
+  getPrompt: (level: number) =>
+    api.get('/translation/prompt', { params: { level } }),
+
+  checkTranslation: (promptId: number, userAnswer: string, userLevel: number) =>
+    api.post<TranslationFeedback>('/translation/check', {
+      prompt_id: promptId,
+      user_answer: userAnswer,
+      user_level: userLevel,
+    }),
+}
+
+// Progress
+export const progressApi = {
+  get: () => api.get<UserProgress>('/progress'),
+}
+
+// Stripe
+export const stripeApi = {
+  createCheckoutSession: () =>
+    api.post<{ url: string }>('/payments/create-checkout'),
+
+  getPortalUrl: () =>
+    api.post<{ url: string }>('/payments/portal'),
+}
+
+export default api
