@@ -1,10 +1,12 @@
 # BurmaLingo
 
+**Live:** https://burmalingo.vercel.app
+
 English learning web app built specifically for Burmese speakers — by someone who has been through every stage of this problem personally.
 
-**The founder's path:** Self-study → Zoom classes → both self-study and Zoom classes for IELTS (all 4 skills) → moved to the US in 2023 → 3 years living and working in an English environment. That full journey — knowing what worked at each stage and what was a waste of time — is what this app is built from.
+**The founder's path:** Self-study to save money → Zoom classes → both self-study and Zoom classes for IELTS (all 4 skills) → moved to the US in February 2023 → 3 years living and working in an English environment. That full journey — knowing what worked at each stage and what was a waste of time — is what this app is built from.
 
-**Why not just use Duolingo?** Duolingo technically has some English content for Burmese speakers, but it is extremely thin — a handful of basic lessons with no real depth, no IELTS preparation, and explanations that assume you already understand English meta-language. BurmaLingo is built entirely around the Burmese learner: the specific grammar mistakes Burmese speakers make in English, the vocabulary gaps that matter for real life in the US or for IELTS, and explanations written the way a Burmese teacher would explain — not translated from English content that was never designed for this audience.
+**The gap this fills:** Most English resources assume you already think in English. BurmaLingo starts from where you actually are — your language, your grammar gaps, your real vocabulary needs. Built entirely around the Burmese learner, not translated from content designed for someone else.
 
 ---
 
@@ -28,33 +30,36 @@ English learning web app built specifically for Burmese speakers — by someone 
 ## Features
 
 ### Curriculum
-- 10-level system from Starter to Advanced — honest naming, no overclaiming
-- Levels 1–4 (Starter → Elementary): Burmese-first explanations — coming soon
-- Levels 5–10 (Intermediate I → Advanced): Simple English explanations — available now
-- Placement test on signup — 5 questions, places you automatically, always skippable
+- 10-level system: Beginner I → Beginner II → Pre-Intermediate I → Pre-Intermediate II → Intermediate I → Intermediate II → Intermediate III → Upper-Intermediate I → Upper-Intermediate II → IELTS Practice
+- Levels 1–4: Burmese-first explanations — coming soon
+- Levels 5–10: Simple English explanations — available now
+- **Placement test on signup** — 5 questions, places you automatically, always skippable
 
 ### Learning Tools
-- **Vocabulary** — SM-2 spaced repetition algorithm implemented from scratch. Schedules reviews at exactly the right time
-- **Translation practice** — given a Burmese sentence, write it in English, get AI feedback calibrated to your level
-- **Listening** — pre-generated native audio via Gemini TTS, stored permanently on S3, never regenerated
-- **Speaking** — Web Speech API transcription + GPT feedback on pronunciation and accuracy (paid only)
-- **Reading comprehension** — graded passages with AI-generated questions per level
+- **Vocabulary** — SM-2 spaced repetition algorithm implemented from scratch
+- **Reading comprehension** — graded passages with comprehension questions per level
+- **Writing practice** — given a topic, write your response, AI grades it (paid only)
+- **Translation practice** — given a Burmese sentence, write it in English, AI evaluates (paid feedback)
+- **Listening** — pre-generated native audio via Gemini TTS, stored permanently on S3
+- **Speaking** — Web Speech API transcription + GPT feedback (paid only)
 
-### Rate Limits (enforced server-side in FastAPI — frontend limits are never trusted)
+### Rate Limits (enforced server-side in FastAPI only — frontend limits are never trusted)
 
 | Feature | Free | Pro |
 |---|---|---|
-| AI grammar feedback | 3 per day | Unlimited |
+| Vocabulary cards | 10 per week | Unlimited |
+| Reading passages | 3 per 2 weeks | Unlimited |
+| Translation practice | 3 per week (no AI feedback) | Unlimited + AI feedback |
+| Writing practice | 3 per 2 weeks (no AI feedback) | Unlimited + full AI grading |
 | Listening exercises | 3 per 2 weeks | Unlimited |
 | Speaking practice | — | Unlimited |
-| Vocabulary cards | Limited daily | Unlimited |
 | Progress analytics | — | Full Recharts dashboard |
 
 ### Payments
-- Pro: $5/month (50% launch discount)
+- Pro: $5/month (50% launch discount from $10)
 - 3-day free trial
-- Stripe for diaspora users (US, Thailand, Singapore, Australia)
-- KBZPay / Wave Money via Facebook page for Myanmar-based users — manual admin tier flip
+- Stripe for diaspora users (US, Thailand, Singapore, Malaysia, Japan, Korea, Australia)
+- KBZPay / Wave Money via Facebook page for Myanmar users — manual admin tier flip
 
 ---
 
@@ -126,10 +131,10 @@ burmalingo/
 
 ## Deployment
 
-- **Frontend** → Vercel (auto-deploys from `main`)
+- **Frontend** → Vercel (auto-deploys from `main`) — live at https://burmalingo.vercel.app
 - **Backend** → AWS Elastic Beanstalk
 - **Database** → AWS RDS PostgreSQL
-- **Audio files** → AWS S3 (pre-generated, permanent, never regenerated)
+- **Audio files** → AWS S3 (pre-generated, permanent)
 - **Stripe webhook** → `POST /api/payments/webhook`
 
 ---
@@ -138,7 +143,7 @@ burmalingo/
 
 | Region | Payment | Status |
 |---|---|---|
-| US, Thailand, Singapore, Malaysia, Japan, Korea | Stripe | v1 |
+| US, Thailand, Singapore, Malaysia, Japan, Korea, Australia | Stripe | v1 |
 | Myanmar | KBZPay / Wave Money via Facebook | Manual, v1 |
 | Myanmar | KBZPay API direct integration | Future |
 
@@ -148,6 +153,13 @@ burmalingo/
 
 **Actively building — target launch July/August 2026.**
 
-CI/CD pipeline live. Backend API scaffolded with auth, SM-2 spaced repetition, Stripe webhooks, and OpenAI integration. Frontend in progress.
+- ✅ Landing page live at https://burmalingo.vercel.app
+- ✅ CI/CD pipeline — pytest + TypeScript build on every push
+- ✅ Backend API scaffolded — auth, SM-2, Stripe webhooks, OpenAI integration
+- ✅ PostgreSQL running locally
+- 🔄 Demo pages (vocab, translation, writing) — in progress
+- 🔄 AWS EC2 + RDS deployment — next
+- 🔄 OpenAI integration — next
+- 🔄 Stripe subscription — next
 
-First users will come from the founder's personal network in Myanmar. Sustainability target: 5–6 paying users at $5/month covers AWS running costs. Resume updated the day it ships.
+First users will come from the founder's personal network in Myanmar. Sustainability target: 5–6 paying users at $5/month covers AWS running costs (~$50/month).
