@@ -1,1 +1,8 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card { @apply bg-white border border-yellow-100 rounded-2xl; }
+  .section-label { @apply text-yellow-600 text-xs tracking-widest uppercase; }
+}
