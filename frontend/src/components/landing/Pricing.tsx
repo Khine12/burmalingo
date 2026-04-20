@@ -18,7 +18,8 @@ export default function Pricing({onDemo}:{onDemo:()=>void}) {
   className="mt-5 w-full py-3 rounded-lg bg-green-900 text-white font-bold text-sm hover:bg-green-800 transition-colors"
 >
   Start Free
-</button>          <div className="relative bg-forest border-2 border-yellow-400 rounded-2xl p-9">
+</button> </div>
+            <div className="relative bg-forest border-2 border-yellow-400 rounded-2xl p-9">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-800 text-white text-xs font-bold tracking-widest px-4 py-1 rounded-full whitespace-nowrap">50% OFF</div>
             <h3 className="font-serif text-2xl font-bold text-white mb-2">Pro</h3>
             <div className="flex items-baseline gap-1.5 mb-1"><span className="font-serif text-5xl font-black text-yellow-400">$5</span><span className="text-white/50 text-sm">/month</span></div>
@@ -27,7 +28,7 @@ export default function Pricing({onDemo}:{onDemo:()=>void}) {
             <button onClick={onDemo} className="mt-5 w-full py-3 rounded-lg bg-yellow-600 text-white font-bold text-sm hover:bg-yellow-500 transition-colors">Start 3-Day Free Trial</button>
           </div>
         </div>
-        <p className="text-center text-bark-light text-xs mt-5">🇲🇲 In Myanmar? We accept <strong className="text-bark">KBZPay & Wave Money</strong> via our Facebook page.</p>
+        <p className="text-center text-bark-light text-xs mt-5">🇲🇲 In Myanmar? Contact us on our Facebook page for pricing and payment options.</p>
       </div>
     </section>
   )

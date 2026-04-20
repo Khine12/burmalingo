@@ -5,8 +5,7 @@ export default function Navbar({ onDemo }: NavbarProps) {
       <span className="font-serif text-gold-light text-2xl font-black">BurmaLingo</span>
       <div className="flex gap-2">
         <button onClick={onDemo} className="text-white/75 text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">Try Demo</button>
-        <button onClick={onDemo} className="btn-gold text-sm px-4 py-2">Start Free →</button>
-      </div>
+<button onClick={onDemo} className="bg-yellow-600 text-white font-bold text-sm px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors">Start Free →</button>      </div>
     </nav>
   )
 }
