@@ -13,8 +13,7 @@ export default function Pricing({onDemo}:{onDemo:()=>void}) {
             <h3 className="font-serif text-2xl font-bold text-bark mb-2">Free</h3>
             <div className="flex items-baseline gap-1 mb-6"><span className="font-serif text-5xl font-black text-bark">$0</span><span className="text-bark-light text-sm">forever</span></div>
             {free.map(f=><div key={f} className="flex items-start gap-2.5 mb-3"><span className="text-green-700 mt-0.5 flex-shrink-0 text-sm">✓</span><span className="text-bark-light text-sm">{f}</span></div>)}
-            <button onClick={onDemo} className="mt-5 w-full py-3 rounded-lg border-2 border-gray-200 text-bark font-bold text-sm hover:bg-cream transition-colors">Start Free</button>
-          </div>
+            <button onClick={onDemo} className="mt-5 w-full py-3 rounded-lg bg-forest text-white font-bold text-sm hover:bg-forest-mid transition-colors">Start Free</button></div>
           <div className="relative bg-forest border-2 border-yellow-400 rounded-2xl p-9">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-800 text-white text-xs font-bold tracking-widest px-4 py-1 rounded-full whitespace-nowrap">50% OFF</div>
             <h3 className="font-serif text-2xl font-bold text-white mb-2">Pro</h3>
