@@ -6,7 +6,7 @@ English learning web app built specifically for Burmese speakers — by someone 
 
 **The founder's path:** Self-study to save money → Zoom classes → both self-study and Zoom classes for IELTS (all 4 skills) → moved to the US in February 2023 → 3 years living and working in an English environment. That full journey — knowing what worked at each stage and what was a waste of time — is what this app is built from.
 
-**The gap this fills:** Most English resources assume you already think in English. BurmaLingo starts from where you actually are — your language, your grammar gaps, your real vocabulary needs. Built entirely around the Burmese learner, not translated from content designed for someone else.
+**The gap this fills:** BurmaLingo starts from where you actually are — your language, your grammar gaps, your real vocabulary needs. Built entirely around the Burmese learner, not translated from content designed for someone else.
 
 ---
 
