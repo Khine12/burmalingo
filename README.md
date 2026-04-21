@@ -2,11 +2,27 @@
 
 **Live:** https://burmalingo.vercel.app
 
-English learning web app built specifically for Burmese speakers — by someone who has been through every stage of this problem personally.
+English learning web app built specifically for Burmese speakers — by a Burmese immigrant who lived this problem from both sides.                    
 
-**The founder's path:** Self-study to save money → Zoom classes → both self-study and Zoom classes for IELTS (all 4 skills) → moved to the US in February 2023 → 3 years living and working in an English environment. That full journey — knowing what worked at each stage and what was a waste of time — is what this app is built from.
+---
 
-**The gap this fills:** BurmaLingo starts from where you actually are — your language, your grammar gaps, your real vocabulary needs. Built entirely around the Burmese learner, not translated from content designed for someone else.
+## The Problem
+
+In Myanmar, joining a single level of English class from a well-known teacher costs roughly half a month's basic salary — and that's not a private lesson. That's a seat in a 100-person Zoom class where the teacher doesn't even know or remember your name. A private teacher at that same price is only possible if they're not well known yet.              
+
+The cheaper options don't solve the problem either. Pre-recorded video courses are affordable but cover only one level — students have to buy multiple separate courses with no coherent progression from beginner to a decent working level. YouTube is free but completely unstructured — hours of content with no clear path from where you are to where you need to be.        
+
+And even if a Burmese learner finds an English app, it wasn't built for them. The explanations assume you already think in English. The grammar rules are written for someone else. The vocabulary prioritizes what matters in the US or UK, not what a Burmese speaker actually needs to know first.                      
+
+**BurmaLingo is the structured, affordable alternative** — a full 10-level curriculum from beginner to IELTS practice, built entirely around how Burmese speakers actually learn English, at a price that doesn't require half a month's salary.         
+
+---
+
+## The Founder's Path
+
+Self-study to save money → Zoom classes → both self-study and Zoom classes for IELTS → moved to the US in February 2023 → 3 years living and working in an English environment.
+
+That full journey — knowing what worked at each stage, what was a waste of money, and what no app ever taught — is what this curriculum is built from.
 
 ---
 
@@ -20,7 +36,7 @@ English learning web app built specifically for Burmese speakers — by someone 
 | File Storage | AWS S3 — pre-generated TTS audio served permanently |
 | Auth | JWT |
 | Payments | Stripe webhooks (diaspora) + manual KBZPay/Wave Money via Facebook (Myanmar) |
-| AI Grammar | OpenAI GPT-4o-mini — paid users only |
+| AI Feedback | OpenAI GPT-4o-mini — paid users only |
 | TTS Audio | Gemini Flash TTS → pre-generated once → stored on S3 forever |
 | Speaking | Web Speech API → backend scoring → GPT feedback (paid only) |
 | CI/CD | GitHub Actions |
@@ -33,13 +49,13 @@ English learning web app built specifically for Burmese speakers — by someone 
 - 10-level system: Beginner I → Beginner II → Pre-Intermediate I → Pre-Intermediate II → Intermediate I → Intermediate II → Intermediate III → Upper-Intermediate I → Upper-Intermediate II → IELTS Practice
 - Levels 1–4: Burmese-first explanations — coming soon
 - Levels 5–10: Simple English explanations — available now
-- **Placement test on signup** — 5 questions, places you automatically, always skippable
+- Placement test on signup — 5 questions, places you automatically, always skippable
 
 ### Learning Tools
 - **Vocabulary** — SM-2 spaced repetition algorithm implemented from scratch
 - **Reading comprehension** — graded passages with comprehension questions per level
 - **Writing practice** — given a topic, write your response, AI grades it (paid only)
-- **Translation practice** — given a Burmese sentence, write it in English, AI evaluates (paid feedback)
+- **Translation practice** — given a Burmese sentence, write it in English, AI evaluates via OpenAI GPT-4o-mini (paid feedback)
 - **Listening** — pre-generated native audio via Gemini TTS, stored permanently on S3
 - **Speaking** — Web Speech API transcription + GPT feedback (paid only)
 
@@ -75,7 +91,7 @@ cp .env.example .env            # fill in your values
 uvicorn main:app --reload
 ```
 
-API: `http://localhost:8000`  
+API: `http://localhost:8000`
 Interactive docs: `http://localhost:8000/docs`
 
 ### Frontend
@@ -143,7 +159,7 @@ burmalingo/
 
 | Region | Payment | Status |
 |---|---|---|
-| US, Thailand, Singapore, Malaysia, Japan, Korea, Australia | Stripe | v1 |
+| US, Thailand, Singapore, Malaysia, Japan, Korea | Stripe | v1 |
 | Myanmar | KBZPay / Wave Money via Facebook | Manual, v1 |
 | Myanmar | KBZPay API direct integration | Future |
 
@@ -155,11 +171,12 @@ burmalingo/
 
 - ✅ Landing page live at https://burmalingo.vercel.app
 - ✅ CI/CD pipeline — pytest + TypeScript build on every push
-- ✅ Backend API scaffolded — auth, SM-2, Stripe webhooks, OpenAI integration
+- ✅ Backend API — auth, SM-2, Stripe webhooks, OpenAI GPT-4o-mini integrated
 - ✅ PostgreSQL running locally
+- ✅ OpenAI translation feedback working end-to-end
 - 🔄 Demo pages (vocab, translation, writing) — in progress
-- 🔄 AWS EC2 + RDS deployment — next
-- 🔄 OpenAI integration — next
 - 🔄 Stripe subscription — next
+- 🔄 AWS EC2 + RDS deployment — after Stripe
+- 🔄 Content seeding (vocab cards, writing topics, Burmese sentences) — summer 2026
 
 First users will come from the founder's personal network in Myanmar. Sustainability target: 5–6 paying users at $5/month covers AWS running costs (~$50/month).
