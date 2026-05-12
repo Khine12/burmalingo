@@ -4,10 +4,12 @@ from datetime import datetime
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    name: str
 
 class UserOut(BaseModel):
     id: int
     email: str
+    name: str
     tier: str
     current_level: int
     created_at: datetime

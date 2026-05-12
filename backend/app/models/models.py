@@ -18,6 +18,7 @@ class User(Base):
 
     id              = Column(Integer, primary_key=True, index=True)
     email           = Column(String, unique=True, index=True, nullable=False)
+    name            = Column(String, nullable=False, server_default="")
     hashed_password = Column(String, nullable=False)
     tier            = Column(Enum(TierEnum), default=TierEnum.free)
     current_level   = Column(Integer, default=5)

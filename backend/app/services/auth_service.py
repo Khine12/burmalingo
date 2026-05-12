@@ -41,10 +41,10 @@ class AuthService:
         return user
 
     @staticmethod
-    def register(email: str, password: str, db: Session) -> User:
+    def register(email: str, password: str, name: str, db: Session) -> User:
         if db.query(User).filter(User.email == email).first():
             raise HTTPException(status_code=400, detail="Email already registered")
-        user = User(email=email, hashed_password=AuthService.hash_password(password))
+        user = User(email=email, name=name, hashed_password=AuthService.hash_password(password))
         db.add(user)
         db.commit()
         db.refresh(user)
