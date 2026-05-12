@@ -31,7 +31,7 @@ def test_register_and_login():
     password = "testpass123!"
 
     # Register
-    r = client.post("/api/auth/register", json={"email": email, "password": password})
+    r = client.post("/api/auth/register", json={"email": email, "password": password, "name": "Test User"})
     assert r.status_code == 201
     assert r.json()["email"] == email
     assert r.json()["tier"] == "free"

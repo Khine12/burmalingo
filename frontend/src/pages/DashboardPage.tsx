@@ -1,32 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-const USAGE_KEY  = 'burmalingo_usage'
-const BAND_KEY   = 'burmalingo_highest_band'
-const WINDOW_KEY = 'burmalingo_writing_usage'
-const WINDOW_MS  = 14 * 24 * 60 * 60 * 1000
-const FREE_LIMIT = 3
+const USAGE_KEY = 'burmalingo_usage'
+const BAND_KEY  = 'burmalingo_highest_band'
 
 interface Stats {
-  totalEssays:   number
-  highestBand:   number
-  windowedUsage: number
+  totalEssays: number
+  highestBand: number
 }
 
 function readStats(): Stats {
-  const totalEssays = parseInt(localStorage.getItem(USAGE_KEY) ?? '0', 10)
-  const highestBand = parseFloat(localStorage.getItem(BAND_KEY) ?? '0')
-
-  let windowedUsage = 0
-  try {
-    const raw = localStorage.getItem(WINDOW_KEY)
-    if (raw) {
-      const { count, windowStart } = JSON.parse(raw) as { count: number; windowStart: number }
-      if (Date.now() - windowStart < WINDOW_MS) windowedUsage = count
-    }
-  } catch {}
-
-  return { totalEssays, highestBand, windowedUsage }
+  return {
+    totalEssays: parseInt(localStorage.getItem(USAGE_KEY) ?? '0', 10),
+    highestBand: parseFloat(localStorage.getItem(BAND_KEY) ?? '0'),
+  }
 }
 
 function initials(name: string) {
@@ -62,7 +49,7 @@ export default function DashboardPage() {
   const features = [
     {
       icon: '✍️', title: 'IELTS Writing Practice',
-      desc: `${stats.windowedUsage} of ${FREE_LIMIT} free essays used this fortnight`,
+      desc: 'Try it now — no limits',
       available: true, href: '/writing', theme: 'forest' as const,
     },
     {

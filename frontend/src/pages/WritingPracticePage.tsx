@@ -117,23 +117,6 @@ const IMPROVEMENT_ICONS = [
   { Icon: IconPencil,    bg: 'bg-bark/[0.07]',  color: 'text-bark-mid' },
 ]
 
-// ── Usage limiting ─────────────────────────────────────────────────────
-const STORAGE_KEY = 'burmalingo_writing_usage'
-const WINDOW_MS   = 14 * 24 * 60 * 60 * 1000
-const FREE_LIMIT  = 3
-
-function readUsage(): { count: number; windowStart: number } {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return { count: 0, windowStart: Date.now() }
-}
-
-function writeUsage(u: { count: number; windowStart: number }) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
-}
-
 // ── Sub-components ─────────────────────────────────────────────────────
 function ScoreBar({ score }: { score: number }) {
   return (
@@ -164,15 +147,6 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
   const [isGrading, setIsGrading]         = useState(false)
   const [result, setResult]               = useState<GradingResult | null>(null)
   const [error, setError]                 = useState<string | null>(null)
-  const [usage, setUsage] = useState(() => {
-    const u = readUsage()
-    if (Date.now() - u.windowStart >= WINDOW_MS) {
-      const fresh = { count: 0, windowStart: Date.now() }
-      writeUsage(fresh)
-      return fresh
-    }
-    return u
-  })
 
   const wordCount = useMemo(
     () => (essay.trim() === '' ? 0 : essay.trim().split(/\s+/).length),
@@ -183,10 +157,8 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
     writingApi.getTopics().then(res => setTopics(res.data))
   }, [])
 
-  const selectedTopic  = topics.find(t => t.id === selectedTopicId) ?? null
-  const limitReached   = usage.count >= FREE_LIMIT
-  const daysRemaining  = Math.max(1, Math.ceil((usage.windowStart + WINDOW_MS - Date.now()) / (24 * 60 * 60 * 1000)))
-  const canSubmit      = !!selectedTopic && wordCount >= 250 && !isGrading && !limitReached
+  const selectedTopic = topics.find(t => t.id === selectedTopicId) ?? null
+  const canSubmit     = !!selectedTopic && wordCount >= 250 && !isGrading
 
   async function handleGrade() {
     if (!selectedTopic || wordCount < 250) return
@@ -196,9 +168,6 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
     try {
       const res = await writingApi.gradeEssay(selectedTopic.text, essay)
       setResult(res.data)
-      const newUsage = { ...usage, count: usage.count + 1 }
-      setUsage(newUsage)
-      writeUsage(newUsage)
       // Dashboard: increment total essay count
       const totalCount = parseInt(localStorage.getItem('burmalingo_usage') ?? '0', 10)
       localStorage.setItem('burmalingo_usage', String(totalCount + 1))
@@ -369,32 +338,6 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
             Scores are estimates for practice only · Not affiliated with IELTS, British Council, or IDP · Actual exam scores may differ
           </p>
 
-          {/* Usage counter / limit message */}
-          {limitReached ? (
-            <div className="text-sm text-center text-bark bg-gold-pale border border-gold/20 rounded-xl px-4 py-3 leading-relaxed">
-              You have used your 3 free essays this fortnight.{' '}
-              <span className="font-semibold">Pro plan coming soon</span>{' '}
-              — check back in {daysRemaining} day{daysRemaining !== 1 ? 's' : ''}.
-            </div>
-          ) : (
-            <p className="text-xs text-center text-bark-light">
-              {usage.count} of {FREE_LIMIT} free essays used this fortnight
-            </p>
-          )}
-
-          {/* Dev-only reset button — hidden in production */}
-          {window.location.hostname === 'localhost' && (
-            <button
-              onClick={() => {
-                localStorage.removeItem(STORAGE_KEY)
-                const fresh = { count: 0, windowStart: Date.now() }
-                setUsage(fresh)
-              }}
-              className="block mx-auto text-xs text-bark-light/30 hover:text-bark-light transition-colors underline"
-            >
-              [dev] reset usage counter
-            </button>
-          )}
         </section>
 
         {error && (
