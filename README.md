@@ -139,9 +139,9 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 ---
-
 ## Project Structure
 
+```
 burmalingo/
 ├── frontend/
 │   ├── src/
@@ -161,18 +161,19 @@ burmalingo/
 │
 ├── backend/
 │   ├── app/
-│   │   ├── models/       # SQLAlchemy: User, VocabCard, ReviewHistory, TranslationPrompt
-│   │   ├── routers/      # FastAPI routes: auth, vocab, translation, progress, payments, writing
-│   │   ├── services/     # Business logic: SM-2, JWT/bcrypt, OpenAI, Stripe, writing grader
-│   │   └── schemas/      # Pydantic request/response schemas
+│   │   ├── models/       # SQLAlchemy models
+│   │   ├── routers/      # FastAPI routes
+│   │   ├── services/     # Business logic
+│   │   └── schemas/      # Pydantic schemas
 │   ├── tests/
 │   ├── main.py
 │   ├── runtime.txt
 │   └── requirements.txt
 │
 └── .github/
-└── workflows/
-└── ci.yml        # pytest + TypeScript build check on every push to main
+    └── workflows/
+        └── ci.yml
+```
 
 ---
 
