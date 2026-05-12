@@ -10,7 +10,12 @@ app = FastAPI(title="BurmaLingo API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://burmalingo.com"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://burmalingo.com",
+        "https://burmalingo.vercel.app",
+        "https://burmalingo-production.up.railway.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
