@@ -12,6 +12,9 @@ export function Footer() {
     <footer className="bg-bark py-9 px-7 text-center">
       <div className="font-serif text-yellow-400 text-xl font-bold mb-1.5">BurmaLingo</div>
       <p className="text-white/40 text-xs">Built by a Burmese immigrant, for Burmese learners worldwide.</p>
+      <p className="text-white/50 text-xs mt-3 max-w-md mx-auto leading-relaxed">
+        AI feedback and scores are estimates for practice purposes only. BurmaLingo is not affiliated with IELTS, British Council, or IDP.
+      </p>
     </footer>
   )
 }

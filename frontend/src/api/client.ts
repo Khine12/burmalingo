@@ -27,8 +27,8 @@ api.interceptors.response.use(
 
 // Auth
 export const authApi = {
-  register: (email: string, password: string) =>
-    api.post<AuthTokens>('/auth/register', { email, password }),
+  register: (email: string, password: string, name: string) =>
+    api.post<User>('/auth/register', { email, password, name }),
 
   login: (email: string, password: string) => {
     const form = new URLSearchParams()
@@ -67,6 +67,14 @@ export const translationApi = {
 // Progress
 export const progressApi = {
   get: () => api.get<UserProgress>('/progress'),
+}
+
+// IELTS Writing practice
+export const writingApi = {
+  getTopics: () => api.get<{ id: number; text: string }[]>('/writing/topics'),
+
+  gradeEssay: (topic: string, essay: string) =>
+    api.post('/writing/grade', { topic, essay }),
 }
 
 // Stripe

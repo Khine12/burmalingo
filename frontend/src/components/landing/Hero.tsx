@@ -16,7 +16,7 @@ export default function Hero({ onDemo }: HeroProps) {
         <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior:'smooth'})} className="bg-white/10 text-white/85 font-medium px-7 py-4 rounded-lg border border-white/20 text-base hover:bg-white/15 transition-colors">How It Works</button>
       </div>
       <div className="flex gap-7 justify-center mt-11 flex-wrap">
-        {[['📶','10 levels'],['🧠','SM-2 spaced repetition'],['🤖','AI feedback'],['📖','IELTS prep']].map(([i,l])=>(
+        {[['📶','7 levels'],['🧠','SM-2 spaced repetition'],['🤖','AI feedback'],['📖','IELTS prep']].map(([i,l])=>(
           <div key={l} className="flex items-center gap-1.5 text-white/50 text-xs"><span>{i}</span>{l}</div>
         ))}
       </div>

@@ -2,6 +2,7 @@
 export interface User {
   id: number
   email: string
+  name: string
   tier: 'free' | 'pro'
   current_level: number
   created_at: string
