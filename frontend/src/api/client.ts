@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { AuthTokens, User, VocabCard, ReviewResult, TranslationFeedback, UserProgress } from '../types'
 
-const baseURL = import.meta.env.DEV
+const baseURL = window.location.hostname === 'localhost'
   ? 'http://localhost:8000/api'
   : 'https://burmalingo-production.up.railway.app/api'
 
