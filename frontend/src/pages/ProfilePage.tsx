@@ -92,7 +92,14 @@ export default function ProfilePage() {
                 : <span className="inline-flex items-center gap-1.5 bg-forest-pale text-forest text-xs font-bold px-2.5 py-1 rounded-full">Free</span>
             }
           />
-          <Row label="Current level" value={`Level ${user.current_level}`} />
+          <Row
+            label="Current level"
+            value="IELTS Preparation"
+            note={<>
+              <a href="/level-test" className="text-forest hover:underline">Take the level test</a>
+              {' '}to find your starting level
+            </>}
+          />
         </div>
 
         {/* Writing practice stats */}
@@ -138,11 +145,14 @@ export default function ProfilePage() {
   )
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({ label, value, note }: { label: string; value: React.ReactNode; note?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-5 py-4">
-      <span className="text-sm text-bark-light">{label}</span>
-      <span className="text-sm font-medium text-bark">{value}</span>
+    <div className="px-5 py-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-bark-light">{label}</span>
+        <span className="text-sm font-medium text-bark">{value}</span>
+      </div>
+      {note && <p className="text-xs text-bark-light/70 mt-1.5">{note}</p>}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { writingApi } from '../api/client'
+import { updateActivity, incrementWeeklyKey } from '../utils/activity'
 
 interface Topic {
   id: number
@@ -176,6 +177,8 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
       if (res.data.overall_band > prevBest) {
         localStorage.setItem('burmalingo_highest_band', String(res.data.overall_band))
       }
+      updateActivity()
+      incrementWeeklyKey('burmalingo_essays_week')
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {

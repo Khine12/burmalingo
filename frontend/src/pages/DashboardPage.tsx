@@ -1,67 +1,98 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { getWeekStart } from '../utils/activity'
 
-const USAGE_KEY = 'burmalingo_usage'
-const BAND_KEY  = 'burmalingo_highest_band'
+// ── Storage helpers ──────────────────────────────────────────────────
+function weeklyCount(key: string): number {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return 0
+    const { weekStart, count } = JSON.parse(raw) as { weekStart: string; count: number }
+    return weekStart === getWeekStart() ? count : 0
+  } catch { return 0 }
+}
 
 interface Stats {
-  totalEssays: number
-  highestBand: number
+  essaysWeek:    number
+  readingsWeek:  number
+  totalEssays:   number
+  totalReadings: number
+  streak:        number
 }
 
 function readStats(): Stats {
   return {
-    totalEssays: parseInt(localStorage.getItem(USAGE_KEY) ?? '0', 10),
-    highestBand: parseFloat(localStorage.getItem(BAND_KEY) ?? '0'),
+    essaysWeek:    weeklyCount('burmalingo_essays_week'),
+    readingsWeek:  weeklyCount('burmalingo_reading_count_week'),
+    totalEssays:   parseInt(localStorage.getItem('burmalingo_usage') ?? '0', 10),
+    totalReadings: parseInt(localStorage.getItem('burmalingo_reading_total') ?? '0', 10),
+    streak:        parseInt(localStorage.getItem('burmalingo_streak') ?? '0', 10),
   }
+}
+
+function goalMessage(n: number): string {
+  if (n >= 5) return 'Weekly goal reached! 🎉'
+  if (n === 4) return 'Almost there!'
+  if (n >= 2) return 'Good momentum!'
+  return 'Just getting started!'
+}
+
+function streakMessage(n: number): string {
+  if (n === 0) return 'Start your streak today!'
+  if (n === 1) return '🔥 1 day — keep it going!'
+  if (n >= 7)  return `🔥 ${n} day streak — incredible!`
+  if (n >= 3)  return `🔥 ${n} day streak — you're on fire!`
+  return `🔥 ${n} day streak`
 }
 
 function initials(name: string) {
   return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'
 }
 
+// ── Page ─────────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const { user, logout, isLoading } = useAuth()
-  const [stats] = useState<Stats>(readStats)
+  const [stats]    = useState<Stats>(readStats)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isLoading && !user) window.location.href = '/login'
   }, [isLoading, user])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const close = () => setMenuOpen(false)
+    document.addEventListener('click', close)
+    return () => document.removeEventListener('click', close)
+  }, [menuOpen])
 
   if (isLoading || !user) return <div className="min-h-screen bg-cream" />
 
   const firstName   = (user.name || user.email).split(/[\s@]/)[0]
   const displayName = user.name || user.email.split('@')[0]
   const today       = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-  const memberSince = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-
-  const milestones = [
-    { emoji: '🎉', label: 'First Step',        desc: 'Account created',   unlocked: true },
-    { emoji: '🖊️', label: 'First Essay',       desc: '1 essay graded',    unlocked: stats.totalEssays >= 1 },
-    { emoji: '📝', label: 'Getting Serious',   desc: '3 essays graded',   unlocked: stats.totalEssays >= 3 },
-    { emoji: '🏆', label: 'Dedicated Writer',  desc: '10 essays graded',  unlocked: stats.totalEssays >= 10 },
-    { emoji: '⭐', label: 'Band 6 Achieved',   desc: 'Highest band ≥ 6.0', unlocked: stats.highestBand >= 6.0 },
-    { emoji: '🌟', label: 'Band 7 Achieved',   desc: 'Highest band ≥ 7.0', unlocked: stats.highestBand >= 7.0 },
-    { emoji: '🔒', label: 'Vocabulary Master', desc: 'Coming soon',       unlocked: false },
-    { emoji: '🔒', label: 'Reading Pro',       desc: 'Coming soon',       unlocked: false },
-  ]
+  const weeklyTotal = stats.essaysWeek + stats.readingsWeek
 
   const features = [
     {
-      icon: '✍️', title: 'IELTS Writing Practice',
-      desc: 'Try it now — no limits',
+      icon: '✍️', title: 'IELTS Writing',
+      desc: `${stats.essaysWeek} ${stats.essaysWeek === 1 ? 'essay' : 'essays'} this week`,
       available: true, href: '/writing', theme: 'forest' as const,
     },
     {
+      icon: '📖', title: 'IELTS Reading',
+      desc: `${stats.readingsWeek} ${stats.readingsWeek === 1 ? 'passage' : 'passages'} this week`,
+      available: true, href: '/reading', theme: 'gold' as const,
+    },
+    {
       icon: '📊', title: 'Level Test',
-      desc: 'Find your starting level — retake anytime',
+      desc: 'Find your starting level',
       available: true, href: '/level-test', theme: 'gold' as const,
     },
-    { icon: '📚', title: 'Vocabulary SM-2',         desc: 'Coming soon', available: false },
-    { icon: '📖', title: 'Reading Comprehension', desc: 'IELTS-style passages · T/F/NG + MCQ', available: true, href: '/reading', theme: 'gold' as const },
-    { icon: '🔄', title: 'Translation Practice',    desc: 'Coming soon', available: false },
-    { icon: '🎧', title: 'Listening Practice',       desc: 'Coming soon', available: false },
-    { icon: '🎤', title: 'Speaking Practice',        desc: 'Coming soon', available: false },
+    { icon: '📚', title: 'Vocabulary SM-2',      desc: 'Coming soon', available: false },
+    { icon: '🔄', title: 'Translation Practice', desc: 'Coming soon', available: false },
+    { icon: '🎧', title: 'Listening Practice',   desc: 'Coming soon', available: false },
+    { icon: '🎤', title: 'Speaking Practice',    desc: 'Coming soon', available: false },
   ]
 
   return (
@@ -71,96 +102,79 @@ export default function DashboardPage() {
       <header className="bg-forest sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
           <span className="font-serif text-gold-light text-2xl font-black">BurmaLingo</span>
-          <div className="flex items-center gap-3">
-            <a
-              href="/profile"
-              className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors"
-              title="View profile"
-            >
-              <span className="text-white text-xs font-bold">{initials(displayName)}</span>
-            </a>
+          <div className="relative">
             <button
-              onClick={logout}
-              className="text-white/80 text-sm font-medium px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 transition-colors"
+              onClick={e => { e.stopPropagation(); setMenuOpen(o => !o) }}
+              className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+              aria-label="Account menu"
             >
-              Log Out
+              <span className="text-white text-[11px] font-bold leading-none">{initials(displayName)}</span>
             </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-9 bg-white rounded-xl shadow-lg border border-bark/10 py-1.5 w-36 z-20">
+                <a href="/profile" className="block px-4 py-2 text-sm text-bark hover:bg-bark/5 transition-colors">Profile</a>
+                <button onClick={logout} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Log Out</button>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10 space-y-10">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-10">
 
         {/* ── Welcome ── */}
         <div>
-          <h1 className="font-serif text-3xl font-bold text-bark">Welcome back, {firstName}!</h1>
-          <p className="text-bark-light text-sm mt-1">{today}</p>
+          <h1 className="font-serif text-2xl font-bold text-bark">Welcome back, {firstName}!</h1>
+          <p className="text-bark-light text-sm mt-0.5">{today}</p>
         </div>
 
-        {/* ── Stats row ── */}
-        <div className="grid grid-cols-3 gap-4">
-          <StatCard label="Essays Graded" value={String(stats.totalEssays)} />
-          <StatCard label="Current Plan"  value={user.tier === 'pro' ? 'Pro ★' : 'Free'} />
-          <StatCard label="Member Since"  value={memberSince} small />
+        {/* ── 4-stat row ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <MiniStat emoji="✍️" accent="forest" label="Essays this week"   value={stats.essaysWeek} />
+          <MiniStat emoji="📖" accent="gold"   label="Passages this week" value={stats.readingsWeek} />
+          <MiniStat emoji="📝" accent="forest" label="Total essays"       value={stats.totalEssays} />
+          <MiniStat emoji="📚" accent="gold"   label="Total passages"     value={stats.totalReadings} />
         </div>
 
-        {/* ── Milestones ── */}
-        <section>
-          <h2 className="font-serif text-xl font-bold text-bark mb-4">Your Journey</h2>
-          <div className="flex gap-3 overflow-x-auto pb-3 -mx-1 px-1 snap-x">
-            {milestones.map((m, i) => (
-              <div
-                key={i}
-                className={`snap-start flex-shrink-0 rounded-xl border p-4 text-center w-[112px] flex flex-col items-center gap-2 transition-all ${
-                  m.unlocked
-                    ? 'bg-forest-pale border-forest/25'
-                    : 'bg-white border-bark/10 opacity-50'
-                }`}
-              >
-                <span className="text-2xl">{m.emoji}</span>
-                <div>
-                  <p className={`text-xs font-semibold leading-snug ${m.unlocked ? 'text-forest' : 'text-bark-light'}`}>
-                    {m.label}
-                  </p>
-                  <p className="text-[10px] text-bark-light/70 mt-0.5 leading-snug">{m.desc}</p>
-                </div>
-                {m.unlocked && (
-                  <span className="w-4 h-4 rounded-full bg-forest flex-shrink-0 flex items-center justify-center">
-                    <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 12 12" fill="none">
-                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                )}
-              </div>
-            ))}
+        {/* ── Activity strip ── */}
+        <div className="bg-white rounded-xl border border-bark/10 shadow-sm px-5 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-bark">{streakMessage(stats.streak)}</span>
+            <span className="text-sm text-bark-light tabular-nums">{Math.min(weeklyTotal, 5)} / 5 this week</span>
           </div>
-        </section>
+          <div className="h-3 bg-bark/8 rounded-full overflow-hidden mb-2">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ease-out ${
+                weeklyTotal >= 5 ? 'bg-forest' : weeklyTotal >= 3 ? 'bg-forest-mid' : 'bg-gold'
+              }`}
+              style={{ width: `${Math.min((weeklyTotal / 5) * 100, 100)}%` }}
+            />
+          </div>
+          <p className="text-xs text-bark-light">{goalMessage(weeklyTotal)}</p>
+        </div>
 
-        {/* ── Features grid ── */}
+        {/* ── Practice tools ── */}
         <section>
-          <h2 className="font-serif text-xl font-bold text-bark mb-4">Your Practice Tools</h2>
+          <h2 className="font-serif text-lg font-bold text-bark mb-3">Your Practice Tools</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {features.map((f, i) =>
               f.available ? (
                 <a
                   key={i}
                   href={f.href}
-                  className={`rounded-xl p-5 flex flex-col gap-2.5 cursor-pointer hover:-translate-y-0.5 transition-transform shadow-sm ${
+                  className={`rounded-xl p-4 flex flex-col gap-2 transition-all duration-200 shadow-sm ${
                     f.theme === 'forest'
-                      ? 'bg-forest text-white shadow-forest/20'
-                      : 'bg-gold text-white shadow-gold/20'
+                      ? 'bg-forest text-white shadow-forest/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-forest/30'
+                      : 'bg-gold text-white shadow-gold/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-gold/30'
                   }`}
                 >
-                  <span className="text-2xl">{f.icon}</span>
+                  <span className="text-xl">{f.icon}</span>
                   <p className="font-semibold text-sm leading-snug">{f.title}</p>
                   <p className="text-xs opacity-80 leading-snug">{f.desc}</p>
                 </a>
               ) : (
-                <div
-                  key={i}
-                  className="rounded-xl p-5 flex flex-col gap-2.5 bg-white border border-bark/10 opacity-55"
-                >
-                  <span className="text-2xl">{f.icon}</span>
+                <div key={i} className="rounded-xl p-4 flex flex-col gap-2 bg-white border border-bark/10 opacity-55">
+                  <span className="text-xl">{f.icon}</span>
                   <p className="font-semibold text-sm text-bark leading-snug">{f.title}</p>
                   <p className="text-xs text-bark-light leading-snug">{f.desc}</p>
                 </div>
@@ -175,13 +189,21 @@ export default function DashboardPage() {
   )
 }
 
-function StatCard({ label, value, small }: { label: string; value: string; small?: boolean }) {
+function MiniStat({ emoji, accent, label, value }: {
+  emoji:  string
+  accent: 'forest' | 'gold'
+  label:  string
+  value:  number
+}) {
   return (
-    <div className="bg-white rounded-xl border border-bark/10 shadow-sm px-4 py-5 text-center">
-      <p className="text-xs text-bark-light uppercase tracking-widest font-semibold mb-2">{label}</p>
-      <p className={`font-serif font-bold text-bark leading-snug ${small ? 'text-sm' : 'text-2xl'}`}>
-        {value}
-      </p>
+    <div className={`bg-white rounded-xl border border-bark/10 shadow-sm px-4 py-3.5 border-l-4 ${
+      accent === 'forest' ? 'border-l-forest' : 'border-l-gold'
+    }`}>
+      <p className="font-serif text-2xl font-bold text-bark">{value}</p>
+      <div className="flex items-center gap-1 mt-0.5">
+        <span className="text-xs">{emoji}</span>
+        <p className="text-[11px] text-bark-light leading-snug">{label}</p>
+      </div>
     </div>
   )
 }
