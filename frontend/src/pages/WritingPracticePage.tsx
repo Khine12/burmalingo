@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { writingApi } from '../api/client'
 import { updateActivity, incrementWeeklyKey } from '../utils/activity'
 
@@ -148,6 +148,7 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
   const [isGrading, setIsGrading]         = useState(false)
   const [result, setResult]               = useState<GradingResult | null>(null)
   const [error, setError]                 = useState<string | null>(null)
+  const submittingRef                     = useRef(false)
 
   const wordCount = useMemo(
     () => (essay.trim() === '' ? 0 : essay.trim().split(/\s+/).length),
@@ -162,7 +163,8 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
   const canSubmit     = !!selectedTopic && wordCount >= 250 && !isGrading
 
   async function handleGrade() {
-    if (!selectedTopic || wordCount < 250) return
+    if (!selectedTopic || wordCount < 250 || submittingRef.current) return
+    submittingRef.current = true
     setIsGrading(true)
     setResult(null)
     setError(null)
@@ -182,6 +184,7 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
+      submittingRef.current = false
       setIsGrading(false)
     }
   }

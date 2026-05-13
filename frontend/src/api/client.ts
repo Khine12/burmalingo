@@ -1,8 +1,12 @@
 import axios from 'axios'
 import type { AuthTokens, User, VocabCard, ReviewResult, TranslationFeedback, UserProgress } from '../types'
 
+const baseURL = import.meta.env.DEV
+  ? 'http://localhost:8000/api'
+  : 'https://burmalingo-production.up.railway.app/api'
+
 const api = axios.create({
-  baseURL: 'https://burmalingo-production.up.railway.app/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 })
 

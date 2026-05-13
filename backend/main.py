@@ -17,8 +17,9 @@ app.add_middleware(
         "https://burmalingo-production.up.railway.app",
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    max_age=3600,
 )
 
 app.include_router(auth.router,        prefix="/api/auth",        tags=["auth"])

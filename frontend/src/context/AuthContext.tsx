@@ -26,12 +26,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setToken(stored)
     authApi.me()
-      .then(res => setUser(res.data))
+      .then(res => {
+        setUser(res.data)
+        setIsLoading(false)
+      })
       .catch(() => {
         // Token invalid — 401 interceptor already cleared localStorage
         setToken(null)
+        setIsLoading(false)
       })
-      .finally(() => setIsLoading(false))
   }, [])
 
   function login(newToken: string, newUser: User) {

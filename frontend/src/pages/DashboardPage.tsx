@@ -66,7 +66,11 @@ export default function DashboardPage() {
     return () => document.removeEventListener('click', close)
   }, [menuOpen])
 
-  if (isLoading || !user) return <div className="min-h-screen bg-cream" />
+  if (isLoading || !user) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="w-8 h-8 rounded-full border-2 border-forest border-t-transparent animate-spin" />
+    </div>
+  )
 
   const firstName   = (user.name || user.email).split(/[\s@]/)[0]
   const displayName = user.name || user.email.split('@')[0]

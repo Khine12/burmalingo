@@ -1,24 +1,6 @@
 import { useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-const STORAGE_KEY = 'burmalingo_writing_usage'
-const WINDOW_MS   = 14 * 24 * 60 * 60 * 1000
-const FREE_LIMIT  = 3
-
-function getEssayUsage(): { count: number; daysLeft: number } {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const { count, windowStart } = JSON.parse(raw) as { count: number; windowStart: number }
-      if (Date.now() - windowStart < WINDOW_MS) {
-        const daysLeft = Math.max(1, Math.ceil((windowStart + WINDOW_MS - Date.now()) / (24 * 60 * 60 * 1000)))
-        return { count, daysLeft }
-      }
-    }
-  } catch {}
-  return { count: 0, daysLeft: 14 }
-}
-
 function initials(name: string) {
   return name
     .trim()
@@ -41,7 +23,6 @@ export default function ProfilePage() {
 
   if (isLoading || !user) return null
 
-  const { count: essayCount, daysLeft } = getEssayUsage()
   const memberSince = new Date(user.created_at).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
   })
@@ -100,35 +81,6 @@ export default function ProfilePage() {
               {' '}to find your starting level
             </>}
           />
-        </div>
-
-        {/* Writing practice stats */}
-        <div className="bg-white rounded-2xl border border-bark/10 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-bark/8">
-            <p className="text-xs font-semibold tracking-widest text-bark-light uppercase">
-              Writing Practice
-            </p>
-          </div>
-          <div className="px-5 py-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-bark">Essays graded this fortnight</span>
-              <span className="font-serif font-bold text-bark text-lg">
-                {essayCount} <span className="text-bark-light font-sans text-sm font-normal">/ {FREE_LIMIT}</span>
-              </span>
-            </div>
-            {/* Progress bar */}
-            <div className="h-2 bg-bark/8 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${essayCount >= FREE_LIMIT ? 'bg-gold' : 'bg-forest'}`}
-                style={{ width: `${Math.min((essayCount / FREE_LIMIT) * 100, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-bark-light">
-              {essayCount >= FREE_LIMIT
-                ? `Resets in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`
-                : `${FREE_LIMIT - essayCount} essay${FREE_LIMIT - essayCount !== 1 ? 's' : ''} remaining · resets in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`}
-            </p>
-          </div>
         </div>
 
         {/* Log out */}
