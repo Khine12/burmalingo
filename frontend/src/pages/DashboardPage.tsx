@@ -58,7 +58,7 @@ export default function DashboardPage() {
       available: true, href: '/level-test', theme: 'gold' as const,
     },
     { icon: '📚', title: 'Vocabulary SM-2',         desc: 'Coming soon', available: false },
-    { icon: '📖', title: 'Reading Comprehension',   desc: 'Coming soon', available: false },
+    { icon: '📖', title: 'Reading Comprehension', desc: 'IELTS-style passages · T/F/NG + MCQ', available: true, href: '/reading', theme: 'gold' as const },
     { icon: '🔄', title: 'Translation Practice',    desc: 'Coming soon', available: false },
     { icon: '🎧', title: 'Listening Practice',       desc: 'Coming soon', available: false },
     { icon: '🎤', title: 'Speaking Practice',        desc: 'Coming soon', available: false },

@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
 import DashboardPage from './pages/DashboardPage'
 import LevelTestPage from './pages/LevelTestPage'
+import ReadingPracticePage from './pages/ReadingPracticePage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -35,6 +36,7 @@ function Router() {
   if (path === '/profile')    return <ProfilePage />
   if (path === '/dashboard')  return <DashboardPage />
   if (path === '/level-test') return <LevelTestPage />
+  if (path === '/reading')    return <ReadingPracticePage />
   if (path === '/writing')    return <WritingPracticePage onBack={() => navigate('/')} />
   return <Landing onDemo={() => navigate('/writing')} />
 }
