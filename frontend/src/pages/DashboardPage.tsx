@@ -30,24 +30,77 @@ function readStats(): Stats {
   }
 }
 
-function goalMessage(n: number): string {
-  if (n >= 5) return 'Weekly goal reached! 🎉'
-  if (n === 4) return 'Almost there!'
-  if (n >= 2) return 'Good momentum!'
-  return 'Just getting started!'
-}
-
 function streakMessage(n: number): string {
   if (n === 0) return 'Start your streak today!'
-  if (n === 1) return '🔥 1 day — keep it going!'
-  if (n >= 7)  return `🔥 ${n} day streak — incredible!`
-  if (n >= 3)  return `🔥 ${n} day streak — you're on fire!`
-  return `🔥 ${n} day streak`
+  if (n === 1) return '1 day — keep it going!'
+  if (n >= 7)  return `${n} day streak — incredible!`
+  if (n >= 3)  return `${n} day streak — you're on fire!`
+  return `${n} day streak`
+}
+
+function goalMessage(n: number): string {
+  if (n >= 5) return 'Weekly goal reached!'
+  if (n === 4) return 'Almost there — one more!'
+  if (n >= 2) return 'Good momentum this week'
+  if (n === 1) return 'Great start!'
+  return 'Complete 5 sessions to hit your goal'
 }
 
 function initials(name: string) {
   return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'
 }
+
+const categories = [
+  {
+    icon: '🎓',
+    title: 'IELTS Preparation',
+    desc: 'Writing, Reading & Listening',
+    href: '/ielts',
+    bg: '#1a3a2a',
+    text: '#ffffff',
+  },
+  {
+    icon: '📝',
+    title: 'Grammar Practice',
+    desc: 'Basic to Advanced lessons',
+    href: '/grammar',
+    bg: '#b45309',
+    text: '#ffffff',
+  },
+  {
+    icon: '📖',
+    title: 'General Reading',
+    desc: 'Passages by level',
+    href: '/reading',
+    bg: '#c1440e',
+    text: '#ffffff',
+  },
+  {
+    icon: '✍️',
+    title: 'General Writing',
+    desc: 'Writing by level',
+    href: '/writing-general',
+    bg: '#c1440e',
+    text: '#ffffff',
+  },
+  {
+    icon: '💬',
+    title: 'Vocabulary & Daily English',
+    desc: 'Phrases, words & speaking',
+    href: '/vocabulary',
+    bg: '#5b3d6e',
+    text: '#ffffff',
+  },
+  {
+    icon: '🎯',
+    title: 'Level Test',
+    desc: 'Find your starting level',
+    href: '/level-test',
+    bg: '#ffffff',
+    text: '#2d1f14',
+    border: true,
+  },
+]
 
 // ── Page ─────────────────────────────────────────────────────────────
 export default function DashboardPage() {
@@ -76,33 +129,7 @@ export default function DashboardPage() {
   const displayName = user.name || user.email.split('@')[0]
   const today       = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
   const weeklyTotal = stats.essaysWeek + stats.readingsWeek
-
-  const features = [
-    {
-      icon: '✍️', title: 'IELTS Writing',
-      desc: `${stats.essaysWeek} ${stats.essaysWeek === 1 ? 'essay' : 'essays'} this week`,
-      available: true, href: '/writing', theme: 'forest' as const,
-    },
-    {
-      icon: '📖', title: 'IELTS Reading',
-      desc: `${stats.readingsWeek} ${stats.readingsWeek === 1 ? 'passage' : 'passages'} this week`,
-      available: true, href: '/reading', theme: 'gold' as const,
-    },
-    {
-      icon: '📊', title: 'Level Test',
-      desc: 'Find your starting level',
-      available: true, href: '/level-test', theme: 'gold' as const,
-    },
-    {
-      icon: '📝', title: 'Grammar Practice',
-      desc: 'Build grammar skills step by step',
-      available: true, href: '/grammar', theme: 'forest' as const,
-    },
-    { icon: '📚', title: 'Vocabulary SM-2',      desc: 'Coming soon', available: false },
-    { icon: '🔄', title: 'Translation Practice', desc: 'Coming soon', available: false },
-    { icon: '🎧', title: 'Listening Practice',   desc: 'Coming soon', available: false },
-    { icon: '🎤', title: 'Speaking Practice',    desc: 'Coming soon', available: false },
-  ]
+  const weekPct     = Math.min((weeklyTotal / 5) * 100, 100)
 
   return (
     <div className="min-h-screen bg-cream font-sans">
@@ -129,7 +156,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-10">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
 
         {/* ── Welcome ── */}
         <div>
@@ -153,82 +180,92 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ── 4-stat row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <MiniStat emoji="✍️" accent="forest" label="Essays this week"   value={stats.essaysWeek} />
-          <MiniStat emoji="📖" accent="gold"   label="Passages this week" value={stats.readingsWeek} />
-          <MiniStat emoji="📝" accent="forest" label="Total essays"       value={stats.totalEssays} />
-          <MiniStat emoji="📚" accent="gold"   label="Total passages"     value={stats.totalReadings} />
-        </div>
+        {/* ── Activity card ── */}
+        <div className="bg-white rounded-2xl border border-bark/10 shadow-sm px-6 py-5">
+          <div className="flex items-start justify-between gap-6">
+            {/* Streak */}
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-3xl leading-none">{stats.streak > 0 ? '🔥' : '💤'}</span>
+              <div className="min-w-0">
+                <p className="font-serif text-2xl font-bold text-bark leading-none">{stats.streak}</p>
+                <p className="text-xs text-bark-light mt-0.5 truncate">{streakMessage(stats.streak)}</p>
+              </div>
+            </div>
 
-        {/* ── Activity strip ── */}
-        <div className="bg-white rounded-xl border border-bark/10 shadow-sm px-5 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-bark">{streakMessage(stats.streak)}</span>
-            <span className="text-sm text-bark-light tabular-nums">{Math.min(weeklyTotal, 5)} / 5 this week</span>
-          </div>
-          <div className="h-3 bg-bark/8 rounded-full overflow-hidden mb-2">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ease-out ${
-                weeklyTotal >= 5 ? 'bg-forest' : weeklyTotal >= 3 ? 'bg-forest-mid' : 'bg-gold'
-              }`}
-              style={{ width: `${Math.min((weeklyTotal / 5) * 100, 100)}%` }}
-            />
-          </div>
-          <p className="text-xs text-bark-light">{goalMessage(weeklyTotal)}</p>
-        </div>
+            {/* Divider */}
+            <div className="w-px bg-bark/10 self-stretch hidden sm:block" />
 
-        {/* ── Practice tools ── */}
-        <section>
-          <h2 className="font-serif text-lg font-bold text-bark mb-3">Your Practice Tools</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {features.map((f, i) =>
-              f.available ? (
-                <a
-                  key={i}
-                  href={f.href}
-                  className={`rounded-xl p-4 flex flex-col gap-2 transition-all duration-200 shadow-sm ${
-                    f.theme === 'forest'
-                      ? 'bg-forest text-white shadow-forest/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-forest/30'
-                      : 'bg-gold text-white shadow-gold/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-gold/30'
+            {/* Weekly progress */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-bark">This week</p>
+                <p className="text-xs font-bold text-bark tabular-nums">{Math.min(weeklyTotal, 5)} / 5</p>
+              </div>
+              <div className="h-2 bg-bark/8 rounded-full overflow-hidden mb-1.5">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ease-out ${
+                    weeklyTotal >= 5 ? 'bg-forest' : weeklyTotal >= 3 ? 'bg-forest/70' : 'bg-gold'
                   }`}
-                >
-                  <span className="text-xl">{f.icon}</span>
-                  <p className="font-semibold text-sm leading-snug">{f.title}</p>
-                  <p className="text-xs opacity-80 leading-snug">{f.desc}</p>
-                </a>
-              ) : (
-                <div key={i} className="rounded-xl p-4 flex flex-col gap-2 bg-white border border-bark/10 opacity-55">
-                  <span className="text-xl">{f.icon}</span>
-                  <p className="font-semibold text-sm text-bark leading-snug">{f.title}</p>
-                  <p className="text-xs text-bark-light leading-snug">{f.desc}</p>
+                  style={{ width: `${weekPct}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-bark-light">{goalMessage(weeklyTotal)}</p>
+            </div>
+
+            {/* Divider */}
+            <div className="w-px bg-bark/10 self-stretch hidden sm:block" />
+
+            {/* Totals */}
+            <div className="flex gap-5 shrink-0">
+              <div className="text-center">
+                <p className="font-serif text-2xl font-bold text-bark leading-none">{stats.totalEssays}</p>
+                <p className="text-[11px] text-bark-light mt-0.5">essays</p>
+              </div>
+              <div className="text-center">
+                <p className="font-serif text-2xl font-bold text-bark leading-none">{stats.totalReadings}</p>
+                <p className="text-[11px] text-bark-light mt-0.5">passages</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Practice categories ── */}
+        <section>
+          <h2 className="font-serif text-lg font-bold text-bark mb-4">Practice</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {categories.map((c) => (
+              <a
+                key={c.href}
+                href={c.href}
+                style={{
+                  backgroundColor: c.bg,
+                  color: c.text,
+                  border: c.border ? '1.5px solid rgba(45,31,20,0.15)' : undefined,
+                }}
+                className="rounded-2xl p-5 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg group"
+              >
+                <span className="text-2xl leading-none">{c.icon}</span>
+                <div>
+                  <p
+                    className="font-semibold text-sm leading-snug"
+                    style={{ color: c.text }}
+                  >
+                    {c.title}
+                  </p>
+                  <p
+                    className="text-xs mt-0.5 leading-snug"
+                    style={{ color: c.border ? '#6b5744' : `${c.text}99` }}
+                  >
+                    {c.desc}
+                  </p>
                 </div>
-              )
-            )}
+              </a>
+            ))}
           </div>
         </section>
 
         <p className="text-center text-xs text-bark-light pb-4">More features coming July 2026</p>
       </main>
-    </div>
-  )
-}
-
-function MiniStat({ emoji, accent, label, value }: {
-  emoji:  string
-  accent: 'forest' | 'gold'
-  label:  string
-  value:  number
-}) {
-  return (
-    <div className={`bg-white rounded-xl border border-bark/10 shadow-sm px-4 py-3.5 border-l-4 ${
-      accent === 'forest' ? 'border-l-forest' : 'border-l-gold'
-    }`}>
-      <p className="font-serif text-2xl font-bold text-bark">{value}</p>
-      <div className="flex items-center gap-1 mt-0.5">
-        <span className="text-xs">{emoji}</span>
-        <p className="text-[11px] text-bark-light leading-snug">{label}</p>
-      </div>
     </div>
   )
 }

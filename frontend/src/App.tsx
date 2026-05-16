@@ -11,6 +11,7 @@ import ReadingPracticePage from './pages/ReadingPracticePage'
 import DemoPage from './pages/DemoPage'
 import PricingPage from './pages/PricingPage'
 import GrammarPracticePage from './pages/GrammarPracticePage'
+import IELTSPage from './pages/IELTSPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -42,6 +43,7 @@ function Router() {
   if (path === '/demo')       return <DemoPage />
   if (path === '/pricing')    return <PricingPage />
   if (path === '/grammar')    return <GrammarPracticePage />
+  if (path === '/ielts')      return <IELTSPage />
   if (path === '/reading')    return <ReadingPracticePage />
   if (path === '/writing')    return <WritingPracticePage onBack={() => navigate('/')} />
   return <Landing onDemo={() => navigate('/demo')} />
