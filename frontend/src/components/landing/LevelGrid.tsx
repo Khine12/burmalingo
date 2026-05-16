@@ -18,7 +18,7 @@ export default function LevelGrid() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {levels.map(l => (
-            <div key={l.n} className={`card p-6 flex items-start gap-4 ${l.n === 6 ? 'sm:col-span-2' : ''}`}>
+            <div key={l.n} className="card p-6 flex items-start gap-4">
               <span className="flex-shrink-0 w-8 h-8 rounded-full bg-bark/8 text-bark-light text-sm font-bold flex items-center justify-center mt-0.5">{l.n}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1">
