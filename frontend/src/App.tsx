@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage'
 import LevelTestPage from './pages/LevelTestPage'
 import ReadingPracticePage from './pages/ReadingPracticePage'
 import DemoPage from './pages/DemoPage'
+import PricingPage from './pages/PricingPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -38,6 +39,7 @@ function Router() {
   if (path === '/dashboard')  return <DashboardPage />
   if (path === '/level-test') return <LevelTestPage />
   if (path === '/demo')       return <DemoPage />
+  if (path === '/pricing')    return <PricingPage />
   if (path === '/reading')    return <ReadingPracticePage />
   if (path === '/writing')    return <WritingPracticePage onBack={() => navigate('/')} />
   return <Landing onDemo={() => navigate('/demo')} />

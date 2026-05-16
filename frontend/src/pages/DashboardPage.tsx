@@ -132,6 +132,22 @@ export default function DashboardPage() {
           <p className="text-bark-light text-sm mt-0.5">{today}</p>
         </div>
 
+        {/* ── Upgrade banner ── */}
+        {user.tier === 'free' && (
+          <div className="flex items-center justify-between bg-forest/10 border border-forest/20 rounded-xl px-5 py-3.5">
+            <div>
+              <p className="text-sm font-semibold text-bark">You're on the Free plan</p>
+              <p className="text-xs text-bark-light mt-0.5">Unlock unlimited practice + AI feedback</p>
+            </div>
+            <a
+              href="/pricing"
+              className="shrink-0 ml-4 bg-forest text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors"
+            >
+              Upgrade to Pro
+            </a>
+          </div>
+        )}
+
         {/* ── 4-stat row ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <MiniStat emoji="✍️" accent="forest" label="Essays this week"   value={stats.essaysWeek} />
