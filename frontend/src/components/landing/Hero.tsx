@@ -1,14 +1,3 @@
-const heroFeatures = [
-  { icon: '🎓', label: 'IELTS Prep', sub: 'Writing & Reading' },
-  { icon: '📝', label: 'Grammar', sub: 'Basic to Upper-Intermediate' },
-  { icon: '📖', label: 'General Reading', sub: 'Real-life stories' },
-  { icon: '✍️', label: 'General Writing', sub: 'Coming soon' },
-  { icon: '💬', label: 'Vocabulary', sub: 'Daily phrases & words' },
-  { icon: '🎧', label: 'Listening', sub: 'Coming soon' },
-  { icon: '🎯', label: 'Level Test', sub: 'Find your level' },
-  { icon: '🗣️', label: 'Speaking', sub: 'Coming soon' },
-]
-
 interface HeroProps { onDemo: () => void }
 export default function Hero({ onDemo }: HeroProps) {
   return (
