@@ -68,16 +68,6 @@ function getLevel(totalXP: number) {
   return               { level: 6, name: 'IELTS Ready',               next: 99999 }
 }
 
-function streakMessage(n: number) {
-  if (n === 0)   return 'Start your streak today!'
-  if (n === 1)   return '1 day — keep it going!'
-  if (n >= 30)   return `${n} days — legendary! 🏆`
-  if (n >= 14)   return `${n} days — incredible! 🔥`
-  if (n >= 7)    return `${n} days — on fire! 🔥`
-  if (n >= 3)    return `${n} days — great streak!`
-  return         `${n} days — building momentum!`
-}
-
 function navigate(to: string) {
   window.history.pushState({}, '', to)
   window.dispatchEvent(new PopStateEvent('popstate'))
