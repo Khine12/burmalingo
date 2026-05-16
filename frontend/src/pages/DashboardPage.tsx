@@ -116,16 +116,16 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-cream font-sans">
 
       {/* Header */}
-      <header className="border-b border-bark/10 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="bg-forest border-b border-forest-mid sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="font-serif font-bold text-xl text-bark">BurmaLingo</span>
+          <span className="font-serif font-bold text-xl text-yellow-400">BurmaLingo</span>
           <div className="flex items-center gap-3">
             {user.tier === 'pro' && (
               <span className="text-xs font-bold bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full">★ Pro</span>
             )}
             <button
               onClick={() => navigate('/profile')}
-              className="w-9 h-9 rounded-full bg-forest text-white text-sm font-bold flex items-center justify-center hover:bg-forest-mid transition-colors"
+              className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm font-bold flex items-center justify-center transition-colors"
             >
               {initials(displayName)}
             </button>
@@ -156,68 +156,36 @@ export default function DashboardPage() {
 
         {/* XP Activity Card */}
         <div className="bg-white rounded-2xl border border-bark/10 shadow-sm overflow-hidden">
-
-          {/* Top row — streak / total XP / weekly XP */}
-          <div className="grid grid-cols-3 divide-x divide-bark/8">
-            <div className="px-5 py-5 text-center">
-              <div className="text-3xl mb-1">{xpData.streak > 0 ? '🔥' : '💤'}</div>
-              <p className="font-serif text-2xl font-bold text-bark">{xpData.streak}</p>
-              <p className="text-[11px] text-bark-light mt-0.5">day streak</p>
-              <p className="text-[10px] text-bark-light/60 mt-1 leading-snug">{streakMessage(xpData.streak)}</p>
+          <div className="flex items-center divide-x divide-bark/8">
+            <div className="flex-1 px-4 py-3 text-center">
+              <p className="text-lg">{xpData.streak > 0 ? '🔥' : '💤'}</p>
+              <p className="font-serif text-xl font-bold text-bark leading-none mt-0.5">{xpData.streak}</p>
+              <p className="text-[10px] text-bark-light mt-0.5">day streak</p>
             </div>
-
-            <div className="px-5 py-5 text-center">
-              <div className="text-3xl mb-1">⚡</div>
-              <p className="font-serif text-2xl font-bold text-bark">{xpData.totalXP}</p>
-              <p className="text-[11px] text-bark-light mt-0.5">total XP</p>
-              <p className="text-[10px] text-bark-light/60 mt-1">{XP_PER_SESSION} XP per session</p>
+            <div className="flex-1 px-4 py-3 text-center">
+              <p className="text-lg">⚡</p>
+              <p className="font-serif text-xl font-bold text-bark leading-none mt-0.5">{xpData.totalXP}</p>
+              <p className="text-[10px] text-bark-light mt-0.5">total XP</p>
             </div>
-
-            <div className="px-5 py-5 text-center">
-              <div className="text-3xl mb-1">🎯</div>
-              <p className="font-serif text-2xl font-bold text-bark">
-                {xpData.weeklyXP}<span className="text-sm font-normal text-bark-light">/{WEEKLY_GOAL_XP}</span>
-              </p>
-              <p className="text-[11px] text-bark-light mt-0.5">weekly XP</p>
-              <p className="text-[10px] text-bark-light/60 mt-1">
-                {xpData.weeklyXP >= WEEKLY_GOAL_XP ? '🎉 Goal reached!' : `${WEEKLY_GOAL_XP - xpData.weeklyXP} XP to go`}
-              </p>
+            <div className="flex-1 px-4 py-3 text-center">
+              <p className="text-lg">🎯</p>
+              <p className="font-serif text-xl font-bold text-bark leading-none mt-0.5">{xpData.weeklyXP}<span className="text-xs font-normal text-bark-light">/{WEEKLY_GOAL_XP}</span></p>
+              <p className="text-[10px] text-bark-light mt-0.5">this week</p>
+            </div>
+            <div className="flex-1 px-4 py-3 text-center">
+              <p className="text-lg">🏆</p>
+              <p className="font-serif text-sm font-bold text-bark leading-none mt-0.5">{levelInfo.name}</p>
+              <p className="text-[10px] text-bark-light mt-0.5">Lv.{levelInfo.level}</p>
             </div>
           </div>
-
-          {/* Weekly progress bar */}
-          <div className="px-5 pb-4">
-            <div className="h-2.5 bg-bark/8 rounded-full overflow-hidden">
+          <div className="px-4 pb-3">
+            <div className="h-1.5 bg-bark/8 rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-700 ease-out ${
-                  weeklyPct >= 100 ? 'bg-forest' : weeklyPct >= 60 ? 'bg-forest/70' : 'bg-gold'
-                }`}
+                className={`h-full rounded-full transition-all duration-700 ${weeklyPct >= 100 ? 'bg-forest' : weeklyPct >= 60 ? 'bg-forest/70' : 'bg-gold'}`}
                 style={{ width: `${weeklyPct}%` }}
               />
             </div>
-            <div className="flex justify-between mt-1.5">
-              <p className="text-[10px] text-bark-light">Weekly goal: {WEEKLY_GOAL_XP} XP</p>
-              <p className="text-[10px] text-bark-light">{Math.round(weeklyPct)}% complete</p>
-            </div>
-          </div>
-
-          {/* Level bar */}
-          <div className="border-t border-bark/8 px-5 py-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-bark-light uppercase tracking-wider">Level {levelInfo.level}</span>
-                <span className="text-xs font-semibold text-bark">{levelInfo.name}</span>
-              </div>
-              {levelInfo.level < 6 && (
-                <span className="text-[11px] text-bark-light">{xpData.totalXP} / {levelInfo.next} XP</span>
-              )}
-            </div>
-            <div className="h-2 bg-bark/8 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gold transition-all duration-700"
-                style={{ width: `${Math.min((xpData.totalXP / levelInfo.next) * 100, 100)}%` }}
-              />
-            </div>
+            <p className="text-[10px] text-bark-light mt-1">{xpData.weeklyXP >= WEEKLY_GOAL_XP ? '🎉 Weekly goal reached!' : `${WEEKLY_GOAL_XP - xpData.weeklyXP} XP to reach weekly goal`}</p>
           </div>
         </div>
 
