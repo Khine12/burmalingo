@@ -26,17 +26,6 @@ export default function Hero({ onDemo }: HeroProps) {
         <button onClick={onDemo} className="bg-yellow-600 text-white font-bold px-7 py-4 rounded-lg text-base hover:-translate-y-0.5 transition-transform">Try It Free →</button>
         <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior:'smooth'})} className="bg-white/10 text-white/85 font-medium px-7 py-4 rounded-lg border border-white/20 text-base hover:bg-white/15 transition-colors">How It Works</button>
       </div>
-      <div className="flex gap-2 justify-center mt-10 flex-wrap max-w-2xl mx-auto">
-        {heroFeatures.map(f => (
-          <div key={f.label} className="bg-white/10 rounded-xl px-3 py-2 flex items-center gap-2 text-left">
-            <span className="text-base leading-none">{f.icon}</span>
-            <div>
-              <p className="text-white text-xs font-bold leading-none">{f.label}</p>
-              <p className="text-white/45 text-[10px] mt-0.5 leading-none">{f.sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
