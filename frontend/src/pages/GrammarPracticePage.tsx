@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { grammarLessons, type GrammarLesson, type GrammarQuestion, type GrammarLevel } from '../data/grammarLessons'
+import { awardXP } from './DashboardPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -57,6 +58,7 @@ export default function GrammarPracticePage() {
       setShowFeedback(false)
     } else {
       setPhase('results')
+      awardXP()
     }
   }
 

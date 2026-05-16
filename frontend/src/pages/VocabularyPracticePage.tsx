@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { vocabularyLessons, type VocabLesson, type VocabQuestion, type VocabCategory } from '../data/vocabularyLessons'
+import { awardXP } from './DashboardPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -57,6 +58,7 @@ export default function VocabularyPracticePage({ category }: { category: VocabCa
       setShowFeedback(false)
     } else {
       setPhase('results')
+      awardXP()
     }
   }
 

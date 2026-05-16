@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { updateActivity, incrementWeeklyKey, incrementTotalKey } from '../utils/activity'
+import { awardXP } from './DashboardPage'
 import {
   readingPassages,
   type ReadingPassage,
@@ -65,9 +65,7 @@ export default function ReadingPracticePage() {
     const correct = passage.questions.filter(q => isAnswerCorrect(q, answers[q.id])).length
     setScore(correct)
     setPhase('results')
-    updateActivity()
-    incrementWeeklyKey('burmalingo_reading_count_week')
-    incrementTotalKey('burmalingo_reading_total')
+    awardXP()
   }
 
   const allAnswered = passage

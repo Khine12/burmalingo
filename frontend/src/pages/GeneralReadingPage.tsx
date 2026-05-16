@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { awardXP } from './DashboardPage'
 import {
   generalReadingPassages,
   type GRPassage,
@@ -72,6 +73,7 @@ export default function GeneralReadingPage() {
     const correct = passage.questions.filter(q => isAnswerCorrect(q, answers[q.id])).length
     setScore(correct)
     setPhase('results')
+    awardXP()
   }
 
   const allAnswered = passage
