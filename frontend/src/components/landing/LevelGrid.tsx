@@ -1,38 +1,38 @@
-import { useState } from 'react'
-const LEVELS = [
-  {n:1,name:'Basic',            desc:'Alphabet, numbers, basic greetings and everyday phrases',         available:false},
-  {n:2,name:'Elementary',       desc:'Simple sentences, present tense and essential vocabulary',         available:false},
-  {n:3,name:'Pre-Intermediate', desc:'Past and future tense, common grammar patterns',                   available:false},
-  {n:4,name:'Intermediate I',   desc:'Complex grammar, formal vs. informal register',                    available:false},
-  {n:5,name:'Intermediate II',  desc:'Idiomatic expressions, paragraph writing skills',                  available:false},
-  {n:6,name:'Upper-Intermediate',desc:'Advanced grammar, professional writing and complex topics',       available:false},
-  {n:7,name:'IELTS Preparation',desc:'IELTS writing and reading practice with AI examiner feedback',     available:true},
+const levels = [
+  { n: 1, name: 'Basic', desc: 'Present simple, past simple, articles, prepositions, common vocabulary', available: true },
+  { n: 2, name: 'Elementary', desc: 'Present continuous, past continuous, comparatives, modal verbs, conjunctions', available: true },
+  { n: 3, name: 'Pre-Intermediate', desc: 'Present perfect, passive voice, conditionals, phrasal verbs, reported speech', available: true },
+  { n: 4, name: 'Intermediate', desc: 'Complex grammar, formal vs informal register, advanced vocabulary', available: false },
+  { n: 5, name: 'Upper-Intermediate', desc: 'Idiomatic expressions, academic writing, nuanced grammar', available: false },
+  { n: 6, name: 'IELTS Preparation', desc: 'IELTS writing and reading practice with AI examiner feedback', available: true },
 ]
+
 export default function LevelGrid() {
-  const [hovered,setHovered]=useState<number|null>(null)
   return (
-    <section className="py-20 px-7 max-w-5xl mx-auto">
-      <div className="text-center mb-14">
-        <p className="section-label mb-3">Curriculum</p>
-        <h2 className="font-serif text-4xl font-extrabold text-bark mb-4">7 levels. One clear path.</h2>
-        <p className="text-bark-light text-sm max-w-md mx-auto">No jumping around — each level builds on the last.</p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {LEVELS.map(lv=>(
-          <div key={lv.n} onMouseEnter={()=>setHovered(lv.n)} onMouseLeave={()=>setHovered(null)}
-            className={`rounded-xl border p-5 transition-all duration-200 ${lv.n===7?'sm:col-span-2':''} ${lv.available?(hovered===lv.n?'bg-forest border-green-700':'bg-card border-border hover:-translate-y-0.5'):'bg-cream border-border opacity-60'}`}>
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2.5">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${lv.available?(hovered===lv.n?'bg-white/15 text-yellow-400':'bg-yellow-50 text-yellow-600'):'bg-gray-200 text-gray-500'}`}>{lv.n}</div>
-                <span className={`font-serif font-bold text-sm ${lv.available?(hovered===lv.n?'text-white':'text-bark'):'text-bark-light'}`}>{lv.name}</span>
+    <section className="py-20 px-7">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <p className="section-label mb-3">Curriculum</p>
+          <h2 className="font-serif text-4xl font-extrabold text-bark">6 levels. One clear path.</h2>
+          <p className="text-bark-light text-sm mt-3">No jumping around — each level builds on the last.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {levels.map(l => (
+            <div key={l.n} className={`card p-6 flex items-start gap-4 ${l.n === 6 ? 'sm:col-span-2' : ''}`}>
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-bark/8 text-bark-light text-sm font-bold flex items-center justify-center mt-0.5">{l.n}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <h3 className="font-serif font-bold text-bark">{l.name}</h3>
+                  {l.available
+                    ? <span className="text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-0.5 rounded-full whitespace-nowrap">Available</span>
+                    : <span className="text-xs font-semibold text-bark-light/60 bg-bark/5 px-2.5 py-0.5 rounded-full whitespace-nowrap">Coming soon</span>
+                  }
+                </div>
+                <p className="text-bark-light text-sm leading-relaxed">{l.desc}</p>
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${!lv.available?'bg-gray-200 text-gray-500':hovered===lv.n?'bg-white/15 text-yellow-400':'bg-green-50 text-green-700'}`}>
-                {lv.available?'Available':'Coming soon'}
-              </span>
             </div>
-            <p className={`text-xs leading-relaxed ml-9 ${lv.available?(hovered===lv.n?'text-white/70':'text-bark-light'):'text-bark-light'}`}>{lv.desc}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )
