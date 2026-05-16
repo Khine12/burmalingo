@@ -12,6 +12,8 @@ import DemoPage from './pages/DemoPage'
 import PricingPage from './pages/PricingPage'
 import GrammarPracticePage from './pages/GrammarPracticePage'
 import IELTSPage from './pages/IELTSPage'
+import VocabularyPage from './pages/VocabularyPage'
+import VocabularyPracticePage from './pages/VocabularyPracticePage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -43,7 +45,10 @@ function Router() {
   if (path === '/demo')       return <DemoPage />
   if (path === '/pricing')    return <PricingPage />
   if (path === '/grammar')    return <GrammarPracticePage />
-  if (path === '/ielts')      return <IELTSPage />
+  if (path === '/ielts')                      return <IELTSPage />
+  if (path === '/vocabulary')                 return <VocabularyPage />
+  if (path === '/vocabulary/daily-phrases')   return <VocabularyPracticePage category="daily-phrases" />
+  if (path === '/vocabulary/common-words')    return <VocabularyPracticePage category="common-words" />
   if (path === '/reading')    return <ReadingPracticePage />
   if (path === '/writing')    return <WritingPracticePage onBack={() => navigate('/')} />
   return <Landing onDemo={() => navigate('/demo')} />
