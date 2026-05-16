@@ -93,6 +93,11 @@ export default function DashboardPage() {
       desc: 'Find your starting level',
       available: true, href: '/level-test', theme: 'gold' as const,
     },
+    {
+      icon: '📝', title: 'Grammar Practice',
+      desc: 'Build grammar skills step by step',
+      available: true, href: '/grammar', theme: 'forest' as const,
+    },
     { icon: '📚', title: 'Vocabulary SM-2',      desc: 'Coming soon', available: false },
     { icon: '🔄', title: 'Translation Practice', desc: 'Coming soon', available: false },
     { icon: '🎧', title: 'Listening Practice',   desc: 'Coming soon', available: false },
