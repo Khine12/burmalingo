@@ -164,8 +164,8 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 px-4 py-3 text-center">
               <p className="text-lg">🏆</p>
-              <p className="font-serif text-sm font-bold text-bark leading-none mt-0.5">{levelInfo.name}</p>
-              <p className="text-[10px] text-bark-light mt-0.5">Lv.{levelInfo.level}</p>
+              <p className="font-serif text-xl font-bold text-bark leading-none mt-0.5">Lv.{levelInfo.level}</p>
+              <p className="text-[10px] text-bark-light mt-0.5">{xpData.totalXP}/{levelInfo.next} XP</p>
             </div>
           </div>
           <div className="px-4 pb-3">
