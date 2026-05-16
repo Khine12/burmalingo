@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage'
 import DashboardPage from './pages/DashboardPage'
 import LevelTestPage from './pages/LevelTestPage'
 import ReadingPracticePage from './pages/ReadingPracticePage'
+import GeneralReadingPage from './pages/GeneralReadingPage'
 import DemoPage from './pages/DemoPage'
 import PricingPage from './pages/PricingPage'
 import GrammarPracticePage from './pages/GrammarPracticePage'
@@ -49,7 +50,8 @@ function Router() {
   if (path === '/vocabulary')                 return <VocabularyPage />
   if (path === '/vocabulary/daily-phrases')   return <VocabularyPracticePage category="daily-phrases" />
   if (path === '/vocabulary/common-words')    return <VocabularyPracticePage category="common-words" />
-  if (path === '/reading')    return <ReadingPracticePage />
+  if (path === '/reading')      return <GeneralReadingPage />
+  if (path === '/ielts/reading') return <ReadingPracticePage />
   if (path === '/writing')    return <WritingPracticePage onBack={() => navigate('/')} />
   return <Landing onDemo={() => navigate('/demo')} />
 }

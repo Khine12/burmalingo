@@ -15,7 +15,7 @@ const cards = [
     icon: '📖',
     title: 'IELTS Reading',
     desc: 'Academic passages with T/F/NG, multiple choice & fill-in',
-    href: '/reading',
+    href: '/ielts/reading',
     available: true,
   },
   {
