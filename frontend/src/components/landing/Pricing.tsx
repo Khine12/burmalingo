@@ -1,5 +1,21 @@
-const free=['10 vocabulary cards per week','3 reading passages per 2 weeks','3 translation exercises per week (no feedback)','3 writing submissions per 2 weeks (no feedback)','3 listening exercises per 2 weeks']
-const pro=['Unlimited vocabulary (500+ words)','Unlimited reading comprehension','Unlimited translation + AI feedback','Unlimited writing + full AI grading','Unlimited listening exercises','Speaking practice with AI scoring','Full progress analytics dashboard','IELTS reading & writing prep']
+const free = [
+  '3 writing submissions per 2 weeks (IELTS + General combined)',
+  '3 reading passages per 2 weeks (IELTS + General combined)',
+  '1 grammar lesson per week',
+  '1 vocabulary & phrases lesson per week',
+  'Level test — one time only',
+]
+
+const pro = [
+  'Unlimited IELTS & General Writing with full AI feedback',
+  'Unlimited IELTS & General Reading',
+  'Unlimited Grammar lessons — all levels',
+  'Unlimited Vocabulary & Daily Phrases',
+  'Retake level test anytime',
+  'IELTS band score grading',
+  'General Writing model answers',
+  'All future content included',
+]
 export default function Pricing({onDemo}:{onDemo:()=>void}) {
   return (
     <section className="py-20 px-7">
