@@ -1,6 +1,5 @@
 # BurmaLingo
-
-**Live: https://burmalingo.vercel.app**
+**Live:** https://burmalingo.vercel.app
 
 English learning web app built specifically for Burmese speakers — by a Burmese immigrant who lived this problem from both sides.
 
@@ -8,95 +7,123 @@ English learning web app built specifically for Burmese speakers — by a Burmes
 
 ## The Problem
 
-In Myanmar, joining a single level of English class from a well-known teacher costs roughly half a month's basic salary — and that's not a private lesson. That's a seat in a 100-person Zoom class where the teacher doesn't even know or remember your name.
+In Myanmar, joining a single level of English class from a well-known teacher costs roughly half a month's basic salary — and that's not a private lesson. That's a seat in a 100-person Zoom class where the teacher doesn't even know your name.
 
-The cheaper options don't solve the problem either. Pre-recorded video courses are affordable but cover only one level — students have to buy multiple separate courses with no coherent progression. YouTube is free but completely unstructured — hours of content with no clear path from where you are to where you need to be.
+The cheaper options don't solve the problem either. Pre-recorded video courses cover only one level. YouTube is free but completely unstructured. And even if a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
 
-And even if a Burmese learner finds an English app, it wasn't built for them. The explanations assume you already think in English. The grammar rules are written for someone else. The vocabulary prioritises what matters in the US or UK, not what a Burmese speaker actually needs to know first.
-
-BurmaLingo is the structured, affordable alternative — a 7-level curriculum from beginner to IELTS preparation, built entirely around how Burmese speakers actually learn English, at a price that doesn't require half a month's salary.
+BurmaLingo is the structured, affordable alternative — built entirely around how Burmese speakers actually learn English.
 
 ---
 
 ## The Founder's Path
 
-Self-study to save money → Zoom classes → both self-study and Zoom classes for IELTS → moved to the US in February 2023 → 3 years living and working in an English environment.
+Self-study → Zoom classes → IELTS prep → moved to the US in February 2023 → 3 years living and working in an English environment.
 
-That full journey — knowing what worked at each stage, what was a waste of money, and what no app ever taught — is what this curriculum is built from.
+That full journey — knowing what worked at each stage and what was a waste of money — is what this curriculum is built from.
 
 ---
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|---|---|
 | Frontend | React + TypeScript + Tailwind CSS → Vercel |
 | Backend | FastAPI (Python) → Railway |
 | Database | PostgreSQL → Neon |
-| File Storage | AWS S3 — pre-generated TTS audio (planned) |
 | Auth | JWT |
-| Payments | Stripe (diaspora) + KBZPay/Wave Money via Facebook (Myanmar) |
+| Payments | Stripe + manual upgrade (Facebook/KBZPay for Myanmar users) |
 | AI Feedback | OpenAI GPT-4o |
 | CI/CD | GitHub Actions |
 
 ---
 
-## Curriculum
-
-7-level system:
+## Curriculum — 6 Levels
 
 | Level | Name | Status |
-|-------|------|--------|
-| 1 | Basic | Coming soon |
-| 2 | Elementary | Coming soon |
-| 3 | Pre-Intermediate | Coming soon |
-| 4 | Intermediate I | Coming soon |
-| 5 | Intermediate II | Coming soon |
-| 6 | Upper-Intermediate | Coming soon |
-| 7 | IELTS Preparation | ✅ Available |
+|---|---|---|
+| 1 | Basic | ✅ Available |
+| 2 | Elementary | ✅ Available |
+| 3 | Pre-Intermediate | ✅ Available |
+| 4 | Intermediate | 🔄 Coming soon |
+| 5 | Upper-Intermediate | 🔄 Coming soon |
+| 6 | IELTS Preparation | ✅ Available |
 
 ---
 
 ## Features
 
-### Currently Live
-- **IELTS Writing Practice** — 35 Task 2 topics, AI band scoring with GPT-4o, sub-scores across all 4 IELTS criteria, specific improvement suggestions referencing the student's actual writing
-- **IELTS Reading Practice** — 20 passages across 10 topics, True/False/Not Given and multiple choice questions, instant feedback with explanations
-- **Level Test** — 35 questions across all 7 levels, randomised each attempt, self-assessment tool
-- **Auth** — JWT register/login, personal dashboard, profile page
-- **Personal Dashboard** — milestone tracking, progress stats, practice tools hub
+### ✅ Currently Live
 
-### Milestones System
-- 🎉 First Step — account created
-- 🖊️ First Essay — 1 essay submitted
-- 📝 Getting Serious — 3 essays submitted
-- 🏆 Dedicated Writer — 10 essays submitted
-- ⭐ Band 6 Achieved — scored 6.0 or above
-- 🌟 Band 7 Achieved — scored 7.0 or above
-- 🔒 Vocabulary Master — coming soon
-- 🔒 Reading Pro — coming soon
+**Grammar Practice**
+- 20 lessons across Basic, Elementary, and Pre-Intermediate
+- 400 questions total — multiple choice and fill-in-blank
+- One question at a time with instant feedback and explanations
 
-### Coming Soon
-- Vocabulary (SM-2 spaced repetition algorithm built from scratch)
-- Translation Practice (Burmese → English with AI feedback)
-- Listening Practice (pre-generated TTS audio via Gemini Flash, stored on S3)
-- Speaking Practice (Web Speech API + GPT feedback)
-- Progress analytics dashboard (Recharts)
+**General Reading**
+- 20 passages (10 Basic + 10 Elementary)
+- Real-life topics: going to the doctor, renting an apartment, taking the bus, starting a new job
+- 20 questions per passage — multiple choice, true/false/not given, fill-in-blank, vocabulary
+- 400 questions total
+
+**General Writing**
+- 30 topics across Basic, Elementary, and Pre-Intermediate
+- AI feedback: grammar corrections, star rating, model answer
+- Relevance check — detects off-topic answers before grading
+- Outlines provided for structured writing tasks (emails, letters)
+
+**IELTS Writing Practice**
+- 35 Task 2 topics
+- GPT-4o band scoring across all 4 IELTS criteria
+- Specific improvement suggestions referencing the student's actual writing
+- Relevance check included
+
+**IELTS Reading Practice**
+- 13 passages across 10 topics
+- True/False/Not Given, multiple choice, fill-in-blank, paragraph matching
+- Instant feedback with explanations
+
+**Vocabulary & Daily English**
+- 16 lessons: Daily Phrases (8 lessons) + Common Words (8 lessons)
+- Topics: greetings, polite requests, shopping, directions, doctor visits, phone calls, making plans, feelings, restaurant, job interviews, travel, weather
+- Family, food, numbers, colors, body parts, clothes, jobs, emotions
+- 320 questions total
+
+**Level Test**
+- 35 questions across all levels
+- Automatic level placement
+
+**Stripe Payments**
+- Pro subscription at $5/month (50% launch discount from $10)
+- 3-day free trial
+- Webhook-based tier upgrade/downgrade
+
+**XP & Progress System**
+- 10 XP per completed session
+- Daily streak tracking with automatic reset
+- Weekly goal (50 XP)
+- 6 XP levels from Beginner to IELTS Ready
+
+**Admin Dashboard**
+- Manual Pro upgrade/downgrade by email (for Myanmar Facebook payments)
+- User list with tier status
+- Feedback/suggestions viewer
 
 ---
 
-## Pricing
+## Free vs Pro
 
-| Plan | Price | Features |
-|------|-------|---------|
-| Free | $0/forever | 3 writing submissions per 2 weeks, 3 reading passages per 2 weeks, level test unlimited |
-| Pro | $5/month | Unlimited everything + AI feedback + speaking practice + analytics |
+| Feature | Free | Pro |
+|---|---|---|
+| Writing (IELTS + General combined) | 3 per 2 weeks | Unlimited |
+| Reading (IELTS + General combined) | 3 per 2 weeks | Unlimited |
+| Grammar | 1 lesson per week | Unlimited |
+| Vocabulary & Phrases | 1 lesson per week | Unlimited |
+| Level Test | Once only | Retake anytime |
+| AI feedback & band scores | ❌ | ✅ |
 
-- 3-day free trial on Pro
-- **Diaspora users** (US, Thailand, Singapore, Malaysia, Japan, Korea, Australia): Stripe
-- **Myanmar users**: KBZPay / Wave Money via Facebook page (manual tier upgrade)
+**Price:** $5/month · 3-day free trial · Cancel anytime
 
-> AI-generated scores and feedback are estimates for practice purposes only. BurmaLingo is not affiliated with IELTS, British Council, or IDP. Actual exam scores may differ.
+**Myanmar users:** KBZPay / Wave Money via Facebook page → manual tier upgrade
 
 ---
 
@@ -109,10 +136,9 @@ python -m venv venv
 source venv/Scripts/activate    # Mac/Linux: source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env            # fill in your values
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
-
-API: http://localhost:8000  
+API: http://localhost:8000
 Docs: http://localhost:8000/docs
 
 ### Frontend
@@ -121,7 +147,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
 App: http://localhost:5173
 
 ### Run Tests
@@ -130,49 +155,47 @@ cd backend
 pytest tests/ -v
 ```
 
-### Environment Variables
+---
+
+## Environment Variables
 
 DATABASE_URL=
 SECRET_KEY=
 OPENAI_API_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_ID=
+ADMIN_SECRET_KEY=
 ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACCESS_TOKEN_EXPIRE_MINUTES=10080
 
 ---
+
 ## Project Structure
 
 ```
 burmalingo/
 ├── frontend/
 │   ├── src/
-│   │   ├── api/          # axios client + JWT interceptor
-│   │   ├── components/   # React components
-│   │   ├── context/      # AuthContext
-│   │   ├── data/         # IELTS reading passages, level test questions
-│   │   ├── hooks/        # custom React hooks
-│   │   ├── pages/        # route-level pages
-│   │   ├── types/        # TypeScript interfaces
-│   │   └── utils/        # SM-2 algorithm, helpers
-│   ├── vercel.json
-│   ├── index.html
-│   ├── tailwind.config.js
-│   ├── tsconfig.json
-│   └── vite.config.ts
+│   │   ├── api/           # axios client + JWT interceptor
+│   │   ├── components/    # landing page components
+│   │   ├── context/       # AuthContext
+│   │   ├── data/          # grammar, vocabulary, reading, writing data
+│   │   ├── pages/         # route-level pages
+│   │   ├── types/         # TypeScript interfaces
+│   │   └── utils/         # XP system, activity helpers
+│   └── ...
 │
 ├── backend/
 │   ├── app/
-│   │   ├── models/       # SQLAlchemy models
-│   │   ├── routers/      # FastAPI routes
-│   │   ├── services/     # Business logic
-│   │   └── schemas/      # Pydantic schemas
+│   │   ├── models/        # SQLAlchemy models
+│   │   ├── routers/       # auth, writing, general_writing, reading, admin, feedback
+│   │   ├── services/      # WritingService, GeneralWritingService
+│   │   └── config.py
 │   ├── tests/
-│   ├── main.py
-│   ├── runtime.txt
 │   └── requirements.txt
 │
-└── .github/
-    └── workflows/
-        └── ci.yml
+└── .github/workflows/ci.yml
 ```
 
 ---
@@ -180,41 +203,36 @@ burmalingo/
 ## Deployment
 
 | Layer | Service |
-|-------|---------|
+|---|---|
 | Frontend | Vercel (auto-deploys from main) |
 | Backend | Railway |
 | Database | Neon PostgreSQL |
-| Audio files | AWS S3 (planned) |
-
----
-
-## Target Markets
-
-| Region | Payment | Status |
-|--------|---------|--------|
-| US, Thailand, Singapore, Malaysia, Japan, Korea, Australia | Stripe | Planned |
-| Myanmar | KBZPay / Wave Money via Facebook | Manual, planned |
-| Myanmar | KBZPay API direct integration | Future |
 
 ---
 
 ## Status
 
-Target launch: **July/August 2026**
+**Target launch: May 30, 2026**
 
-✅ Landing page live at https://burmalingo.vercel.app  
-✅ CI/CD pipeline — pytest + TypeScript build on every push  
-✅ Backend deployed on Railway  
-✅ PostgreSQL on Neon  
-✅ JWT auth — register, login, profile page  
-✅ Personal dashboard with milestone tracking  
-✅ Level test — 35 questions, randomised, self-assessment  
-✅ IELTS Writing Practice — 35 topics, GPT-4o band scoring  
-✅ IELTS Reading Practice — 20 passages, instant feedback  
-🔄 Stripe subscription — next  
-🔄 Vocabulary SM-2 — summer 2026  
-🔄 Translation practice — summer 2026  
-🔄 Listening practice (Gemini TTS + S3) — summer 2026  
-🔄 Speaking practice — summer 2026  
+✅ Landing page live  
+✅ CI/CD pipeline  
+✅ JWT auth  
+✅ Stripe payments + 3-day trial  
+✅ Grammar Practice — 20 lessons, 400 questions  
+✅ General Reading — 20 passages, 400 questions  
+✅ General Writing — 30 topics, AI feedback  
+✅ IELTS Writing — 35 topics, GPT-4o band scoring  
+✅ IELTS Reading — 13 passages  
+✅ Vocabulary & Daily English — 16 lessons, 320 questions  
+✅ XP system + streak tracking  
+✅ Admin dashboard + manual Pro upgrade  
+✅ Feedback collection system  
+🔄 Free tier enforcement (in progress)  
+🔄 Intermediate + Upper-Intermediate content  
+🔄 Listening Practice (AWS S3 + TTS)  
+🔄 Speaking Practice  
 
-Sustainability target: 5–6 paying users at $5/month covers Railway + infrastructure costs.
+---
+
+*AI-generated scores and feedback are estimates for practice purposes only. BurmaLingo is not affiliated with IELTS, British Council, or IDP.*
+
