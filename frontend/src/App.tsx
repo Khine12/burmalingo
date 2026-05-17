@@ -16,6 +16,7 @@ import IELTSPage from './pages/IELTSPage'
 import VocabularyPage from './pages/VocabularyPage'
 import VocabularyPracticePage from './pages/VocabularyPracticePage'
 import GeneralWritingPage from './pages/GeneralWritingPage'
+import AdminPage from './pages/AdminPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -55,6 +56,7 @@ function Router() {
   if (path === '/ielts/reading') return <ReadingPracticePage />
   if (path === '/writing')         return <WritingPracticePage onBack={() => navigate('/')} />
   if (path === '/writing-general') return <GeneralWritingPage />
+  if (path === '/admin')           return <AdminPage />
   return <Landing onDemo={() => navigate('/demo')} />
 }
 
