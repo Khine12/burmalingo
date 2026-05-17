@@ -90,4 +90,12 @@ export const stripeApi = {
     api.post<{ url: string }>('/payments/portal'),
 }
 
+// General Writing practice
+export const generalWritingApi = {
+  getTopics: (level: string) =>
+    api.get<{ id: number; text: string; outline: string | null }[]>(`/general-writing/topics/${level}`),
+  gradeEssay: (topic: string, essay: string, level: string) =>
+    api.post('/general-writing/grade', { topic, essay, level }),
+}
+
 export default api
