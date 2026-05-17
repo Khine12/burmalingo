@@ -160,7 +160,7 @@ export default function PricingPage() {
         </div>
 
         <p className="text-center text-bark-light text-xs mt-5">
-          🇲🇲 In Myanmar? Contact us on our Facebook page for pricing and payment options.
+          🇲🇲 In Myanmar? <a href="https://www.facebook.com/profile.php?id=61589778724021" target="_blank" rel="noopener noreferrer" className="underline hover:text-bark transition-colors">Contact us on Facebook</a> for pricing and payment options.
         </p>
       </div>
     </div>

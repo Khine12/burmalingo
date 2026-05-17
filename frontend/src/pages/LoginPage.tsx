@@ -97,17 +97,6 @@ export default function LoginPage() {
             {isLoading ? 'Signing in…' : 'Sign In'}
           </button>
 
-          <p className="text-xs text-center text-bark-light">
-            Forgot password?{' '}
-            <a
-              href="https://www.facebook.com/burmalingo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-forest-mid underline"
-            >
-              Contact us on Facebook
-            </a>
-          </p>
         </form>
 
         <p className="text-center text-sm text-bark-light mt-6">

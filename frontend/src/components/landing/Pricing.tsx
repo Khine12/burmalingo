@@ -44,7 +44,9 @@ export default function Pricing({onDemo}:{onDemo:()=>void}) {
             <button onClick={onDemo} className="mt-5 w-full py-3 rounded-lg bg-yellow-600 text-white font-bold text-sm hover:bg-yellow-500 transition-colors">Start 3-Day Free Trial</button>
           </div>
         </div>
-        <p className="text-center text-bark-light text-xs mt-5">🇲🇲 In Myanmar? Contact us on our Facebook page for pricing and payment options.</p>
+        <p className="text-center text-bark-light text-xs mt-5">
+          🇲🇲 In Myanmar? <a href="https://www.facebook.com/profile.php?id=61589778724021" target="_blank" rel="noopener noreferrer" className="underline hover:text-bark transition-colors">Contact us on Facebook</a> for pricing and payment options.
+        </p>
       </div>
     </section>
   )
