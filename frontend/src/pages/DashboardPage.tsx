@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import FeedbackButton from './FeedbackButton'
 
 // ── XP Storage helpers ─────────────────────────────────────────────
 const XP_PER_SESSION = 10
@@ -206,6 +207,7 @@ export default function DashboardPage() {
 
         <p className="text-center text-xs text-bark-light pb-4">More features coming July 2026</p>
       </main>
+      <FeedbackButton />
     </div>
   )
 }

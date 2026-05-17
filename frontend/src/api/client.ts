@@ -90,6 +90,12 @@ export const stripeApi = {
     api.post<{ url: string }>('/payments/portal'),
 }
 
+// Feedback
+export const feedbackApi = {
+  submit: (message: string, email?: string) =>
+    api.post('/feedback/submit', { message, email }),
+}
+
 // General Writing practice
 export const generalWritingApi = {
   getTopics: (level: string) =>

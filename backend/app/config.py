@@ -19,6 +19,8 @@ class Settings(BaseSettings):
 
     STRIPE_TRIAL_DAYS: int = 3
 
+    ADMIN_SECRET_KEY: str = "change-this-admin-key"
+
     model_config = ConfigDict(env_file=".env")
 
 settings = Settings()
