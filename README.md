@@ -7,11 +7,9 @@ English learning web app built specifically for Burmese speakers — by a Burmes
 
 ## The Problem
 
-In Myanmar, joining a single level of English class from a well-known teacher costs roughly half a month's basic salary — and that's not a private lesson. That's a seat in a 100-person Zoom class where the teacher doesn't even know your name.
+In Myanmar, a single level of English class from a well-known teacher costs roughly half a month's basic salary — for a seat in a 100-person Zoom class where the teacher doesn't know your name. Cheaper video courses cover only one level with no structured progression. YouTube is free but completely unstructured. And even if a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
 
-The cheaper options don't solve the problem either. Pre-recorded video courses cover only one level. YouTube is free but completely unstructured. And even if a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
-
-BurmaLingo is the structured, affordable alternative — built entirely around how Burmese speakers actually learn English.
+BurmaLingo is the structured, affordable alternative.
 
 ---
 
@@ -31,13 +29,13 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Backend | FastAPI (Python) → Railway |
 | Database | PostgreSQL → Neon |
 | Auth | JWT |
-| Payments | Stripe + manual upgrade (Facebook/KBZPay for Myanmar users) |
+| Payments | Stripe + manual upgrade for Myanmar users |
 | AI Feedback | OpenAI GPT-4o |
 | CI/CD | GitHub Actions |
 
 ---
 
-## Curriculum — 6 Levels
+## Curriculum
 
 | Level | Name | Status |
 |---|---|---|
@@ -50,63 +48,27 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 ---
 
-## Features
+## What's Built
 
-### ✅ Currently Live
+**Grammar Practice** — Multiple choice and fill-in-blank lessons across Basic, Elementary, and Pre-Intermediate. One question at a time with instant feedback and clear explanations in simple English.
 
-**Grammar Practice**
-- 20 lessons across Basic, Elementary, and Pre-Intermediate
-- 400 questions total — multiple choice and fill-in-blank
-- One question at a time with instant feedback and explanations
+**General Reading** — Real-life passages about living in an English-speaking world: going to the doctor, renting an apartment, taking the bus, starting a new job. Multiple choice, True/False/Not Given, fill-in-blank, and vocabulary questions.
 
-**General Reading**
-- 20 passages (10 Basic + 10 Elementary)
-- Real-life topics: going to the doctor, renting an apartment, taking the bus, starting a new job
-- 20 questions per passage — multiple choice, true/false/not given, fill-in-blank, vocabulary
-- 400 questions total
+**General Writing** — Topics across all three levels with AI feedback: grammar corrections, a star rating, and a model answer. Structured outlines provided for emails and letters. Relevance check detects off-topic answers before grading.
 
-**General Writing**
-- 30 topics across Basic, Elementary, and Pre-Intermediate
-- AI feedback: grammar corrections, star rating, model answer
-- Relevance check — detects off-topic answers before grading
-- Outlines provided for structured writing tasks (emails, letters)
+**IELTS Writing Practice** — 35 Task 2 topics with GPT-4o band scoring across all 4 IELTS criteria. Feedback references exact phrases from the student's writing. Relevance check included.
 
-**IELTS Writing Practice**
-- 35 Task 2 topics
-- GPT-4o band scoring across all 4 IELTS criteria
-- Specific improvement suggestions referencing the student's actual writing
-- Relevance check included
+**IELTS Reading Practice** — Academic-style passages with True/False/Not Given, multiple choice, fill-in-blank, and paragraph matching. Instant results with explanations.
 
-**IELTS Reading Practice**
-- 13 passages across 10 topics
-- True/False/Not Given, multiple choice, fill-in-blank, paragraph matching
-- Instant feedback with explanations
+**Vocabulary & Daily English** — Daily Phrases (greetings, requests, shopping, directions, doctor visits, phone calls, making plans, feelings, restaurants, interviews, travel, weather) and Common Words (family, food, numbers, colors, and more).
 
-**Vocabulary & Daily English**
-- 16 lessons: Daily Phrases (8 lessons) + Common Words (8 lessons)
-- Topics: greetings, polite requests, shopping, directions, doctor visits, phone calls, making plans, feelings, restaurant, job interviews, travel, weather
-- Family, food, numbers, colors, body parts, clothes, jobs, emotions
-- 320 questions total
+**Level Test** — 35-question placement test to find your starting level automatically.
 
-**Level Test**
-- 35 questions across all levels
-- Automatic level placement
+**XP & Progress System** — 10 XP per session, daily streak tracking, weekly goal, and 6 progression levels from Beginner to IELTS Ready.
 
-**Stripe Payments**
-- Pro subscription at $5/month (50% launch discount from $10)
-- 3-day free trial
-- Webhook-based tier upgrade/downgrade
+**Stripe Payments** — $5/month Pro subscription with 3-day free trial and webhook-based tier control. Myanmar users pay via KBZPay/Wave Money through Facebook with manual tier upgrade.
 
-**XP & Progress System**
-- 10 XP per completed session
-- Daily streak tracking with automatic reset
-- Weekly goal (50 XP)
-- 6 XP levels from Beginner to IELTS Ready
-
-**Admin Dashboard**
-- Manual Pro upgrade/downgrade by email (for Myanmar Facebook payments)
-- User list with tier status
-- Feedback/suggestions viewer
+**Admin Dashboard** — Manual Pro upgrade/downgrade by email, user list, and feedback viewer.
 
 ---
 
@@ -114,34 +76,31 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 | Feature | Free | Pro |
 |---|---|---|
-| Writing (IELTS + General combined) | 3 per 2 weeks | Unlimited |
-| Reading (IELTS + General combined) | 3 per 2 weeks | Unlimited |
+| Writing — IELTS + General combined | 3 per 2 weeks | Unlimited |
+| Reading — IELTS + General combined | 3 per 2 weeks | Unlimited |
 | Grammar | 1 lesson per week | Unlimited |
 | Vocabulary & Phrases | 1 lesson per week | Unlimited |
 | Level Test | Once only | Retake anytime |
 | AI feedback & band scores | ❌ | ✅ |
 
-**Price:** $5/month · 3-day free trial · Cancel anytime
-
-**Myanmar users:** KBZPay / Wave Money via Facebook page → manual tier upgrade
+$5/month · 3-day free trial · Cancel anytime
 
 ---
 
 ## Local Setup
 
-### Backend
+**Backend**
 ```bash
 cd backend
 python -m venv venv
-source venv/Scripts/activate    # Mac/Linux: source venv/bin/activate
+source venv/Scripts/activate  # Mac/Linux: source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env            # fill in your values
+cp .env.example .env          # fill in your values
 uvicorn app.main:app --reload
 ```
-API: http://localhost:8000
-Docs: http://localhost:8000/docs
+API: http://localhost:8000 · Docs: http://localhost:8000/docs
 
-### Frontend
+**Frontend**
 ```bash
 cd frontend
 npm install
@@ -149,7 +108,7 @@ npm run dev
 ```
 App: http://localhost:5173
 
-### Run Tests
+**Tests**
 ```bash
 cd backend
 pytest tests/ -v
@@ -202,11 +161,13 @@ burmalingo/
 
 ---
 
+---
+
 ## Deployment
 
 | Layer | Service |
 |---|---|
-| Frontend | Vercel (auto-deploys from main) |
+| Frontend | Vercel — auto-deploys from main |
 | Backend | Railway |
 | Database | Neon PostgreSQL |
 
@@ -214,25 +175,26 @@ burmalingo/
 
 ## Status
 
-**Target launch: May 30, 2026**
+**🎯 Target launch: May 31 – June 1, 2026**
 
 ✅ Landing page live  
 ✅ CI/CD pipeline  
 ✅ JWT auth  
 ✅ Stripe payments + 3-day trial  
-✅ Grammar Practice — 20 lessons, 400 questions  
-✅ General Reading — 20 passages, 400 questions  
-✅ General Writing — 30 topics, AI feedback  
-✅ IELTS Writing — 35 topics, GPT-4o band scoring  
-✅ IELTS Reading — 13 passages  
-✅ Vocabulary & Daily English — 16 lessons, 320 questions  
+✅ Grammar Practice  
+✅ General Reading  
+✅ General Writing with AI feedback  
+✅ IELTS Writing with GPT-4o band scoring  
+✅ IELTS Reading  
+✅ Vocabulary & Daily English  
 ✅ XP system + streak tracking  
 ✅ Admin dashboard + manual Pro upgrade  
 ✅ Feedback collection system  
-🔄 Free tier enforcement (in progress)  
-🔄 Intermediate + Upper-Intermediate content  
-🔄 Listening Practice (AWS S3 + TTS)  
-🔄 Speaking Practice  
+🔄 Email verification + password reset  
+🔄 Free tier enforcement  
+🔄 Listening Practice  
+🔄 Intermediate + Upper-Intermediate content 
+🔄 Speaking Practice (future)
 
 ---
 
