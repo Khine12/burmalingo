@@ -193,7 +193,7 @@ burmalingo/
 🔄 Email verification + password reset  
 🔄 Free tier enforcement  
 🔄 Listening Practice  
-🔄 Intermediate + Upper-Intermediate content 
+🔄 Intermediate + Upper-Intermediate content     
 🔄 Speaking Practice (future)
 
 ---
