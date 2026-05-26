@@ -21,6 +21,9 @@ class Settings(BaseSettings):
 
     ADMIN_SECRET_KEY: str = "change-this-admin-key"
 
+    RESEND_API_KEY: str = ""
+    FRONTEND_URL: str = "https://burmalingo.vercel.app"
+
     model_config = ConfigDict(env_file=".env")
 
 settings = Settings()

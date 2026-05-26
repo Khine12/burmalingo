@@ -23,6 +23,10 @@ class User(Base):
     tier            = Column(Enum(TierEnum), default=TierEnum.free)
     current_level   = Column(Integer, default=5)
     stripe_customer_id = Column(String, nullable=True)
+    is_verified = Column(Boolean, default=False)
+    verification_token = Column(String, nullable=True)
+    reset_token = Column(String, nullable=True)
+    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
     created_at      = Column(DateTime(timezone=True), server_default=func.now())
 
     reviews         = relationship("ReviewHistory", back_populates="user")
