@@ -2,7 +2,7 @@ const features = [
   { icon: '🎓', label: 'IELTS Prep', sub: 'Writing & Reading' },
   { icon: '📝', label: 'Grammar', sub: 'Basic to Upper-Intermediate' },
   { icon: '📖', label: 'General Reading', sub: 'Real-life stories' },
-  { icon: '✍️', label: 'General Writing', sub: 'Coming soon' },
+  { icon: '✍️', label: 'General Writing', sub: 'Practice writing by level with AI feedback' },
   { icon: '💬', label: 'Vocabulary', sub: 'Daily phrases & words' },
   { icon: '🎧', label: 'Listening', sub: 'Coming soon' },
   { icon: '🎯', label: 'Level Test', sub: 'Find your level' },
