@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('access_token')
     setToken(null)
     setUser(null)
-    window.location.href = '/'
+    window.location.href = '/login'
   }
 
   return (

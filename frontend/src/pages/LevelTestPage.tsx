@@ -60,7 +60,6 @@ export default function LevelTestPage() {
         date: new Date().toISOString(),
       }))
       setPhase('result')
-      recordLevelTestDone()
     } else {
       setCurrentQ(prev => prev + 1)
       setSelected(null)
@@ -265,12 +264,12 @@ export default function LevelTestPage() {
 
           {/* Actions */}
           <div className="flex flex-col gap-3">
-            <a
-              href="/dashboard"
-              className="block w-full py-3.5 bg-forest text-white font-bold text-sm rounded-xl tracking-wide text-center hover:bg-forest-mid transition-colors shadow-sm shadow-forest/20"
+            <button
+              onClick={() => { recordLevelTestDone(); window.location.href = '/dashboard' }}
+              className="w-full py-3.5 bg-forest text-white font-bold text-sm rounded-xl tracking-wide text-center hover:bg-forest-mid transition-colors shadow-sm shadow-forest/20"
             >
               Go to Dashboard
-            </a>
+            </button>
             <button
               onClick={handleRetake}
               className="w-full py-3.5 border-2 border-bark/15 text-bark-light text-sm font-semibold rounded-xl hover:bg-white hover:border-bark/25 hover:text-bark transition-all"
