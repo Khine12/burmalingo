@@ -25,7 +25,9 @@ export default function LoginPage() {
       localStorage.removeItem('access_token')
       const status = (err as { response?: { status?: number } }).response?.status
       setError(
-        status === 401
+        status === 403
+          ? 'Please verify your email before logging in. Check your inbox.'
+          : status === 401
           ? 'Incorrect email or password.'
           : 'Something went wrong. Please try again.',
       )
@@ -96,6 +98,9 @@ export default function LoginPage() {
           >
             {isLoading ? 'Signing in…' : 'Sign In'}
           </button>
+          <p className="text-center text-xs text-bark-light mt-3">
+            <button onClick={() => { window.history.pushState({}, '', '/forgot-password'); window.dispatchEvent(new PopStateEvent('popstate')) }} className="text-forest hover:underline">Forgot your password?</button>
+          </p>
 
         </form>
 

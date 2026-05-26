@@ -2,14 +2,20 @@ import { useState, type FormEvent } from 'react'
 import { authApi } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 
+function navigate(to: string) {
+  window.history.pushState({}, '', to)
+  window.dispatchEvent(new PopStateEvent('popstate'))
+}
+
 export default function RegisterPage() {
-  const { login } = useAuth()
+  const { login: _login } = useAuth()
   const [name, setName]         = useState('')
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm]   = useState('')
   const [error, setError]       = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [registered, setRegistered] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -26,17 +32,9 @@ export default function RegisterPage() {
 
     setIsLoading(true)
     try {
-      // Register — backend returns UserOut (not tokens)
       await authApi.register(email, password, name.trim())
-      // Auto-login immediately after successful registration
-      const tokenRes = await authApi.login(email, password)
-      const { access_token } = tokenRes.data
-      localStorage.setItem('access_token', access_token)
-      const userRes = await authApi.me()
-      login(access_token, userRes.data)
-      window.location.href = '/dashboard'
+      setRegistered(true)
     } catch (err: unknown) {
-      localStorage.removeItem('access_token')
       const detail = (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
       if (typeof detail === 'string' && detail.toLowerCase().includes('email')) {
         setError('An account with this email already exists.')
@@ -46,6 +44,19 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (registered) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+          <p className="text-4xl">📧</p>
+          <h1 className="font-serif text-2xl font-bold text-bark">Check your email!</h1>
+          <p className="text-bark-light text-sm leading-relaxed">We sent a verification link to your email address. Click the link to activate your account.</p>
+          <p className="text-bark-light text-xs">Did not receive it? Check your spam folder or <button onClick={() => navigate('/login')} className="text-forest underline">go back to login</button>.</p>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -17,6 +17,9 @@ import VocabularyPage from './pages/VocabularyPage'
 import VocabularyPracticePage from './pages/VocabularyPracticePage'
 import GeneralWritingPage from './pages/GeneralWritingPage'
 import AdminPage from './pages/AdminPage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -57,6 +60,9 @@ function Router() {
   if (path === '/writing')         return <WritingPracticePage onBack={() => navigate('/')} />
   if (path === '/writing-general') return <GeneralWritingPage />
   if (path === '/admin')           return <AdminPage />
+  if (path === '/verify-email')    return <VerifyEmailPage />
+  if (path === '/forgot-password') return <ForgotPasswordPage />
+  if (path === '/reset-password')  return <ResetPasswordPage />
   return <Landing onDemo={() => navigate('/demo')} />
 }
 
