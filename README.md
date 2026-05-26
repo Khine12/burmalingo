@@ -28,9 +28,10 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Frontend | React + TypeScript + Tailwind CSS → Vercel |
 | Backend | FastAPI (Python) → Railway |
 | Database | PostgreSQL → Neon |
-| Auth | JWT |
+| Auth | JWT + email verification |
 | Payments | Stripe + manual upgrade for Myanmar users |
 | AI Feedback | OpenAI GPT-4o |
+| Email | Resend |
 | CI/CD | GitHub Actions |
 
 ---
@@ -39,12 +40,12 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 | Level | Name | Status |
 |---|---|---|
-| 1 | Basic | ✅ Available |
-| 2 | Elementary | ✅ Available |
-| 3 | Pre-Intermediate | ✅ Available |
+| 1 | Basic | ✅ Live |
+| 2 | Elementary | ✅ Live |
+| 3 | Pre-Intermediate | ✅ Live |
 | 4 | Intermediate | 🔄 Coming soon |
 | 5 | Upper-Intermediate | 🔄 Coming soon |
-| 6 | IELTS Preparation | ✅ Available |
+| 6 | IELTS Preparation | ✅ Live |
 
 ---
 
@@ -54,7 +55,7 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 **General Reading** — Real-life passages about living in an English-speaking world: going to the doctor, renting an apartment, taking the bus, starting a new job. Multiple choice, True/False/Not Given, fill-in-blank, and vocabulary questions.
 
-**General Writing** — Topics across all three levels with AI feedback: grammar corrections, a star rating, and a model answer. Structured outlines provided for emails and letters. Relevance check detects off-topic answers before grading.
+**General Writing** — Topics across all three levels with AI feedback: grammar corrections, star rating, and a model answer. Structured outlines provided for emails and letters. Relevance check detects off-topic answers before grading.
 
 **IELTS Writing Practice** — 35 Task 2 topics with GPT-4o band scoring across all 4 IELTS criteria. Feedback references exact phrases from the student's writing. Relevance check included.
 
@@ -67,6 +68,10 @@ That full journey — knowing what worked at each stage and what was a waste of 
 **XP & Progress System** — 10 XP per session, daily streak tracking, weekly goal, and 6 progression levels from Beginner to IELTS Ready.
 
 **Stripe Payments** — $5/month Pro subscription with 3-day free trial and webhook-based tier control. Myanmar users pay via KBZPay/Wave Money through Facebook with manual tier upgrade.
+
+**Email Verification & Password Reset** — Verification email sent on registration via Resend. Password reset flow with time-limited tokens.
+
+**Free Tier Enforcement** — Usage limits tracked per user with automatic period resets.
 
 **Admin Dashboard** — Manual Pro upgrade/downgrade by email, user list, and feedback viewer.
 
@@ -85,6 +90,8 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 $5/month · 3-day free trial · Cancel anytime
 
+Myanmar users: KBZPay / Wave Money via Facebook → manual tier upgrade
+
 ---
 
 ## Local Setup
@@ -95,7 +102,7 @@ cd backend
 python -m venv venv
 source venv/Scripts/activate  # Mac/Linux: source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env          # fill in your values
+cp .env.example .env
 uvicorn app.main:app --reload
 ```
 API: http://localhost:8000 · Docs: http://localhost:8000/docs
@@ -128,6 +135,8 @@ STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_ID=
 ADMIN_SECRET_KEY=
+RESEND_API_KEY=
+FRONTEND_URL=
 ```
 
 ---
@@ -144,22 +153,20 @@ burmalingo/
 │   │   ├── data/          # grammar, vocabulary, reading, writing data
 │   │   ├── pages/         # route-level pages
 │   │   ├── types/         # TypeScript interfaces
-│   │   └── utils/         # XP system, activity helpers
+│   │   └── utils/         # XP system, limits, activity helpers
 │   └── ...
 │
 ├── backend/
 │   ├── app/
 │   │   ├── models/        # SQLAlchemy models
-│   │   ├── routers/       # auth, writing, general_writing, reading, admin, feedback
-│   │   ├── services/      # WritingService, GeneralWritingService
+│   │   ├── routers/       # auth, writing, general_writing, admin, feedback
+│   │   ├── services/      # WritingService, GeneralWritingService, EmailService
 │   │   └── config.py
 │   ├── tests/
 │   └── requirements.txt
 │
 └── .github/workflows/ci.yml
 ```
-
----
 
 ---
 
@@ -175,28 +182,26 @@ burmalingo/
 
 ## Status
 
-**🎯 Target launch: May 31 – June 1, 2026**
+🚀 **Launched May 2026**
 
-✅ Landing page live  
+✅ Landing page  
 ✅ CI/CD pipeline  
-✅ JWT auth  
-✅ Stripe payments + 3-day trial  
-✅ Grammar Practice  
-✅ General Reading  
-✅ General Writing with AI feedback  
+✅ JWT auth + email verification + password reset  
+✅ Stripe payments + 3-day free trial  
+✅ Free tier enforcement  
+✅ Grammar Practice — Basic, Elementary, Pre-Intermediate  
+✅ General Reading — Basic, Elementary  
+✅ General Writing with AI feedback — Basic, Elementary, Pre-Intermediate  
 ✅ IELTS Writing with GPT-4o band scoring  
 ✅ IELTS Reading  
 ✅ Vocabulary & Daily English  
 ✅ XP system + streak tracking  
 ✅ Admin dashboard + manual Pro upgrade  
 ✅ Feedback collection system  
-🔄 Email verification + password reset  
-🔄 Free tier enforcement  
+🔄 Intermediate + Upper-Intermediate content  
 🔄 Listening Practice  
-🔄 Intermediate + Upper-Intermediate content     
-🔄 Speaking Practice (future)
+🔄 Speaking Practice (future)  
 
 ---
 
 *AI-generated scores and feedback are estimates for practice purposes only. BurmaLingo is not affiliated with IELTS, British Council, or IDP.*
-
