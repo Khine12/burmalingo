@@ -205,7 +205,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <p className="text-center text-xs text-bark-light pb-4">More features coming July 2026</p>
       </main>
       <FeedbackButton />
     </div>
