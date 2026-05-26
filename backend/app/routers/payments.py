@@ -18,8 +18,8 @@ def create_checkout(user: User = Depends(get_current_user)):
         line_items=[{"price": settings.STRIPE_PRICE_ID, "quantity": 1}],
         mode="subscription",
         subscription_data={"trial_period_days": settings.STRIPE_TRIAL_DAYS},
-        success_url="https://burmalingo.com/dashboard?upgraded=true",
-        cancel_url="https://burmalingo.com/pricing",
+        success_url="https://burmalingo.vercel.app/dashboard?upgraded=true",
+        cancel_url="https://burmalingo.vercel.app/pricing",
         metadata={"user_id": str(user.id)},
     )
     return {"url": session.url}
