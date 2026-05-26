@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { generalWritingApi } from '../api/client'
 import { awardXP } from './DashboardPage'
+import { useAuth } from '../context/AuthContext'
+import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -52,16 +54,22 @@ export default function GeneralWritingPage() {
     generalWritingApi.getTopics(level).then(res => setTopics(res.data))
   }, [level])
 
+  const { user } = useAuth()
+  const [limitBlocked, setLimitBlocked] = useState(false)
+  const isPro = user?.tier === 'pro'
+
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
   const minWords = LEVEL_MIN_WORDS[level]
 
   async function handleSubmit() {
     if (!selectedTopic) return
+    if (!canUse('writing', isPro)) { setLimitBlocked(true); return }
     setLoading(true)
     setError('')
     try {
       const res = await generalWritingApi.gradeEssay(selectedTopic.text, essay, level)
       setResult(res.data)
+      recordUsage('writing')
       awardXP()
       setPhase('result')
     } catch {
@@ -83,6 +91,22 @@ export default function GeneralWritingPage() {
     if (phase === 'write') { setPhase('select'); setSelectedTopic(null) }
     else if (phase === 'result') { setPhase('write') }
   }
+
+  if (limitBlocked) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <h1 className="font-serif text-xl font-bold text-bark">Free Limit Reached</h1>
+        <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.writing}</p>
+        <a href="/pricing" className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors">
+          Upgrade to Pro →
+        </a>
+        <button onClick={() => setLimitBlocked(false)} className="text-sm text-bark-light hover:text-bark transition-colors">
+          Back
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-cream font-sans">

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { vocabularyLessons, type VocabLesson, type VocabQuestion, type VocabCategory } from '../data/vocabularyLessons'
 import { awardXP } from './DashboardPage'
+import { useAuth } from '../context/AuthContext'
+import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -35,9 +37,14 @@ export default function VocabularyPracticePage({ category }: { category: VocabCa
   const [answers, setAnswers] = useState<Record<number, string | number>>({})
   const [showFeedback, setShowFeedback] = useState(false)
 
+  const { user } = useAuth()
+  const [limitBlocked, setLimitBlocked] = useState(false)
+  const isPro = user?.tier === 'pro'
+
   const lessons = vocabularyLessons.filter(l => l.category === category)
 
   function startLesson(l: VocabLesson) {
+    if (!canUse('vocab', isPro)) { setLimitBlocked(true); return }
     setLesson(l)
     setCurrent(0)
     setAnswers({})
@@ -59,6 +66,7 @@ export default function VocabularyPracticePage({ category }: { category: VocabCa
     } else {
       setPhase('results')
       awardXP()
+      recordUsage('vocab')
     }
   }
 
@@ -67,6 +75,22 @@ export default function VocabularyPracticePage({ category }: { category: VocabCa
     : 0
 
   const accentColor = category === 'daily-phrases' ? '#5b3d6e' : '#b45309'
+
+  if (limitBlocked) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <h1 className="font-serif text-xl font-bold text-bark">Free Limit Reached</h1>
+        <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.vocab}</p>
+        <a href="/pricing" className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors">
+          Upgrade to Pro →
+        </a>
+        <button onClick={() => setLimitBlocked(false)} className="text-sm text-bark-light hover:text-bark transition-colors">
+          Back
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-cream font-sans">

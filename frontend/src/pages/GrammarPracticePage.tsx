@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { grammarLessons, type GrammarLesson, type GrammarQuestion, type GrammarLevel } from '../data/grammarLessons'
 import { awardXP } from './DashboardPage'
+import { useAuth } from '../context/AuthContext'
+import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -33,11 +35,16 @@ export default function GrammarPracticePage() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [filterLevel, setFilterLevel] = useState<GrammarLevel | 'all'>('all')
 
+  const { user } = useAuth()
+  const [limitBlocked, setLimitBlocked] = useState(false)
+  const isPro = user?.tier === 'pro'
+
   const filtered = filterLevel === 'all'
     ? grammarLessons
     : grammarLessons.filter(l => l.level === filterLevel)
 
   function startLesson(l: GrammarLesson) {
+    if (!canUse('grammar', isPro)) { setLimitBlocked(true); return }
     setLesson(l)
     setCurrent(0)
     setAnswers({})
@@ -59,12 +66,29 @@ export default function GrammarPracticePage() {
     } else {
       setPhase('results')
       awardXP()
+      recordUsage('grammar')
     }
   }
 
   const score = lesson
     ? lesson.questions.filter(q => isCorrect(q, answers[q.id])).length
     : 0
+
+  if (limitBlocked) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <h1 className="font-serif text-xl font-bold text-bark">Free Limit Reached</h1>
+        <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.grammar}</p>
+        <a href="/pricing" className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors">
+          Upgrade to Pro →
+        </a>
+        <button onClick={() => setLimitBlocked(false)} className="text-sm text-bark-light hover:text-bark transition-colors">
+          Back
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-cream font-sans">

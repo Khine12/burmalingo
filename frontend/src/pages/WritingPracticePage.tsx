@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { writingApi } from '../api/client'
 import { awardXP } from './DashboardPage'
+import { useAuth } from '../context/AuthContext'
+import { canUse, recordUsage, getRemaining, LIMIT_MESSAGES } from '../utils/limits'
 
 interface Topic {
   id: number
@@ -149,6 +151,9 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
   const [result, setResult]               = useState<GradingResult | null>(null)
   const [error, setError]                 = useState<string | null>(null)
   const submittingRef                     = useRef(false)
+  const { user } = useAuth()
+  const [limitBlocked, setLimitBlocked]   = useState(false)
+  const isPro = user?.tier === 'pro'
 
   const wordCount = useMemo(
     () => (essay.trim() === '' ? 0 : essay.trim().split(/\s+/).length),
@@ -164,6 +169,7 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
 
   async function handleGrade() {
     if (!selectedTopic || wordCount < 250 || submittingRef.current) return
+    if (!canUse('writing', isPro)) { setLimitBlocked(true); return }
     submittingRef.current = true
     setIsGrading(true)
     setResult(null)
@@ -171,6 +177,7 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
     try {
       const res = await writingApi.gradeEssay(selectedTopic.text, essay)
       setResult(res.data)
+      recordUsage('writing')
       // Dashboard: increment total essay count
       const totalCount = parseInt(localStorage.getItem('burmalingo_usage') ?? '0', 10)
       localStorage.setItem('burmalingo_usage', String(totalCount + 1))
@@ -208,6 +215,22 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
     : wordCount > 0
       ? 'text-gold'
       : 'text-bark-light'
+
+  if (limitBlocked) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <h1 className="font-serif text-xl font-bold text-bark">Free Limit Reached</h1>
+        <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.writing}</p>
+        <a href="/pricing" className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors">
+          Upgrade to Pro →
+        </a>
+        <button onClick={() => setLimitBlocked(false)} className="text-sm text-bark-light hover:text-bark transition-colors">
+          Back
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-cream text-bark font-sans">
@@ -334,6 +357,11 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
               : 'Get Band Score'}
           </button>
 
+          {!isPro && (
+            <p className="text-center text-xs text-bark-light">
+              {getRemaining('writing', isPro)} free submission{getRemaining('writing', isPro) !== 1 ? 's' : ''} remaining this period
+            </p>
+          )}
           {/* AI badge */}
           <p className="flex items-center justify-center gap-1.5 text-xs text-bark-light">
             <IconStar />

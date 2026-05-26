@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { QUESTIONS, LEVEL_NAMES } from '../data/levelTestQuestions'
+import { useAuth } from '../context/AuthContext'
+import { canTakeLevelTest, recordLevelTestDone, LIMIT_MESSAGES } from '../utils/limits'
 
 type Phase = 'intro' | 'quiz' | 'result'
 
@@ -31,6 +33,8 @@ export default function LevelTestPage() {
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null))
   const [selected, setSelected] = useState<number | null>(null)
   const [result, setResult]   = useState<{ scores: Record<number, LevelScore>; recommended: number } | null>(null)
+  const { user } = useAuth()
+  const isPro = user?.tier === 'pro'
 
   const q        = QUESTIONS[currentQ]
   const progress = ((currentQ + (selected !== null ? 1 : 0)) / QUESTIONS.length) * 100
@@ -55,6 +59,7 @@ export default function LevelTestPage() {
         date: new Date().toISOString(),
       }))
       setPhase('result')
+      recordLevelTestDone()
     } else {
       setCurrentQ(prev => prev + 1)
       setSelected(null)
@@ -68,6 +73,22 @@ export default function LevelTestPage() {
     setSelected(null)
     setResult(null)
   }
+
+  if (!canTakeLevelTest(isPro)) return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
+        <p className="text-4xl">🔒</p>
+        <h1 className="font-serif text-xl font-bold text-bark">Level Test Locked</h1>
+        <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.levelTest}</p>
+        <a href="/pricing" className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors">
+          Upgrade to Pro →
+        </a>
+        <a href="/dashboard" className="block text-sm text-bark-light hover:text-bark transition-colors mt-2">
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-cream font-sans">
