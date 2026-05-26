@@ -36,6 +36,14 @@ def test_register_and_login():
     assert r.json()["email"] == email
     assert r.json()["tier"] == "free"
 
+    # Bypass email verification for testing
+    db = TestingSession()
+    from app.models.models import User
+    user = db.query(User).filter(User.email == email).first()
+    user.is_verified = True
+    db.commit()
+    db.close()
+
     # Login
     r = client.post(
         "/api/auth/token",
