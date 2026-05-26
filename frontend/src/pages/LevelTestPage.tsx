@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { QUESTIONS, LEVEL_NAMES } from '../data/levelTestQuestions'
 import { useAuth } from '../context/AuthContext'
 import { canTakeLevelTest, recordLevelTestDone, LIMIT_MESSAGES } from '../utils/limits'
@@ -7,10 +7,10 @@ type Phase = 'intro' | 'quiz' | 'result'
 
 interface LevelScore { correct: number; total: number }
 
-function computeResult(answers: (number | null)[]) {
+function computeResult(answers: (number | null)[], questions: typeof QUESTIONS) {
   const scores: Record<number, LevelScore> = {}
 
-  QUESTIONS.forEach((q, i) => {
+  questions.forEach((q, i) => {
     if (!scores[q.level]) scores[q.level] = { correct: 0, total: 0 }
     scores[q.level].total++
     if (answers[i] === q.correct) scores[q.level].correct++
@@ -18,7 +18,7 @@ function computeResult(answers: (number | null)[]) {
 
   // Highest consecutive level where score >= 3 / 5
   let recommended = 1
-  for (let lvl = 1; lvl <= 7; lvl++) {
+  for (let lvl = 1; lvl <= 6; lvl++) {
     const s = scores[lvl]
     if (s && s.correct >= 3) recommended = lvl
     else break
@@ -30,16 +30,17 @@ function computeResult(answers: (number | null)[]) {
 export default function LevelTestPage() {
   const [phase, setPhase]     = useState<Phase>('intro')
   const [currentQ, setCurrentQ] = useState(0)
-  const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null))
+  const shuffledQuestions = useMemo(() => [...QUESTIONS].sort(() => Math.random() - 0.5), [])
+  const [answers, setAnswers] = useState<(number | null)[]>(new Array(shuffledQuestions.length).fill(null))
   const [selected, setSelected] = useState<number | null>(null)
   const [result, setResult]   = useState<{ scores: Record<number, LevelScore>; recommended: number } | null>(null)
   const { user } = useAuth()
   const isPro = user?.tier === 'pro'
 
-  const q        = QUESTIONS[currentQ]
-  const progress = ((currentQ + (selected !== null ? 1 : 0)) / QUESTIONS.length) * 100
+  const q        = shuffledQuestions[currentQ]
+  const progress = ((currentQ + (selected !== null ? 1 : 0)) / shuffledQuestions.length) * 100
   const isCorrect = selected !== null && selected === q.correct
-  const isLast    = currentQ === QUESTIONS.length - 1
+  const isLast    = currentQ === shuffledQuestions.length - 1
 
   function handleSelect(i: number) {
     if (selected !== null) return
@@ -52,7 +53,7 @@ export default function LevelTestPage() {
     setAnswers(newAnswers)
 
     if (isLast) {
-      const r = computeResult(newAnswers)
+      const r = computeResult(newAnswers, shuffledQuestions)
       setResult(r)
       localStorage.setItem('burmalingo_level_result', JSON.stringify({
         level: r.recommended,
@@ -69,7 +70,7 @@ export default function LevelTestPage() {
   function handleRetake() {
     setPhase('intro')
     setCurrentQ(0)
-    setAnswers(new Array(QUESTIONS.length).fill(null))
+    setAnswers(new Array(shuffledQuestions.length).fill(null))
     setSelected(null)
     setResult(null)
   }
@@ -114,7 +115,7 @@ export default function LevelTestPage() {
           <div>
             <h1 className="font-serif text-3xl font-bold text-bark">Level Placement Test</h1>
             <p className="text-bark-light text-sm mt-3 leading-relaxed max-w-sm mx-auto">
-              35 questions across 7 levels — from Basic to IELTS Preparation. We use your results to recommend your ideal starting level. Retake anytime.
+              35 questions across 6 levels — from Basic to IELTS Preparation. We use your results to recommend your ideal starting level. Retake anytime.
             </p>
           </div>
           <div className="flex justify-center gap-6 text-sm text-bark-light">
@@ -141,7 +142,7 @@ export default function LevelTestPage() {
           {/* Progress bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-bark-light">
-              <span>Question {currentQ + 1} of {QUESTIONS.length}</span>
+              <span>Question {currentQ + 1} of {shuffledQuestions.length}</span>
               <span className="text-bark-light/60">Level {q.level} · {LEVEL_NAMES[q.level]}</span>
             </div>
             <div className="h-1.5 bg-bark/10 rounded-full overflow-hidden">

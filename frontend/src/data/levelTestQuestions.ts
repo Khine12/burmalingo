@@ -12,10 +12,9 @@ export const LEVEL_NAMES: Record<number, string> = {
   1: 'Basic',
   2: 'Elementary',
   3: 'Pre-Intermediate',
-  4: 'Intermediate I',
-  5: 'Intermediate II',
-  6: 'Upper-Intermediate',
-  7: 'IELTS Preparation',
+  4: 'Intermediate',
+  5: 'Upper-Intermediate',
+  6: 'IELTS Preparation',
 }
 
 export const QUESTIONS: LevelTestQuestion[] = [
@@ -140,7 +139,7 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "The passage states the environmental benefit is the reason for growing popularity.",
   },
 
-  // ── Level 4: Intermediate I ───────────────────────────────────────────
+  // ── Level 4: Intermediate ────────────────────────────────────────────
   {
     id: 16, level: 4, type: 'grammar',
     question: 'By the time she arrived, we ___ for two hours.',
@@ -187,30 +186,30 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "The passage explicitly mentions increased social inequality as a negative effect.",
   },
 
-  // ── Level 5: Intermediate II ──────────────────────────────────────────
+  // ── Level 4: Intermediate (continued) ───────────────────────────────
   {
-    id: 21, level: 5, type: 'grammar',
+    id: 21, level: 4, type: 'grammar',
     question: 'Not only ___ late, but he also forgot his report.',
     options: ['he arrived', 'did he arrive', 'he did arrive', 'arrived he'],
     correct: 1,
     explanation: "After 'not only' at the start of a clause, subject-auxiliary inversion is required: 'did he arrive'.",
   },
   {
-    id: 22, level: 5, type: 'vocabulary',
+    id: 22, level: 4, type: 'vocabulary',
     question: 'The report was ___ in its findings, covering every possible angle.',
     options: ['comprehensive', 'aggressive', 'redundant', 'vague'],
     correct: 0,
     explanation: "'Comprehensive' means complete and thorough, covering all aspects of something.",
   },
   {
-    id: 23, level: 5, type: 'grammar',
+    id: 23, level: 4, type: 'grammar',
     question: 'I wish I ___ harder when I was at university.',
     options: ['study', 'studied', 'had studied', 'would study'],
     correct: 2,
     explanation: "'Wish' + past perfect expresses regret about something that did not happen in the past.",
   },
   {
-    id: 24, level: 5, type: 'correction',
+    id: 24, level: 4, type: 'correction',
     question: "Find the error: 'The committee have reached their decision after a long debate.'",
     options: [
       "'committee' should be 'committees'",
@@ -222,7 +221,7 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "In British English, collective nouns like 'committee' can take either a singular or plural verb and pronoun. Both are acceptable.",
   },
   {
-    id: 25, level: 5, type: 'reading',
+    id: 25, level: 4, type: 'reading',
     question: "The placebo effect demonstrates that the mind's expectations can produce measurable physiological changes, challenging the traditional boundary between psychological and physical medicine. What does this suggest?",
     options: [
       'Placebos are more effective than real medicine',
@@ -234,30 +233,30 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "The passage says the placebo effect challenges the boundary between psychological and physical medicine — implying they are more connected than thought.",
   },
 
-  // ── Level 6: Upper-Intermediate ───────────────────────────────────────
+  // ── Level 5: Upper-Intermediate ──────────────────────────────────────
   {
-    id: 26, level: 6, type: 'grammar',
+    id: 26, level: 5, type: 'grammar',
     question: 'Had the government intervened earlier, the crisis ___ avoided.',
     options: ['could have been', 'could be', 'would be', 'can be'],
     correct: 0,
     explanation: "This is an inverted third conditional: 'Had + subject + past participle' replaces 'If + subject + had + past participle'. The result clause uses 'would/could have + past participle'.",
   },
   {
-    id: 27, level: 6, type: 'vocabulary',
+    id: 27, level: 5, type: 'vocabulary',
     question: "The author's prose style is deliberately ___, using simple language to convey complex ideas.",
     options: ['verbose', 'lucid', 'ambiguous', 'ornate'],
     correct: 1,
     explanation: "'Lucid' means expressed clearly and intelligibly — the opposite of complex or obscure.",
   },
   {
-    id: 28, level: 6, type: 'grammar',
+    id: 28, level: 5, type: 'grammar',
     question: 'The regulations require that all employees ___ safety training annually.',
     options: ['complete', 'completes', 'completed', 'completing'],
     correct: 0,
     explanation: "'Require that' triggers the subjunctive mood in formal English: the base verb form without -s or past tense inflection.",
   },
   {
-    id: 29, level: 6, type: 'reading',
+    id: 29, level: 5, type: 'reading',
     question: "The paradox of tolerance, first articulated by Karl Popper, suggests that a society which is tolerant without limit will eventually be seized by the intolerant. To preserve tolerance, a society must be intolerant of intolerance. What does Popper's paradox imply?",
     options: [
       'Tolerance is always harmful to society',
@@ -269,7 +268,7 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "Popper argues that unlimited tolerance paradoxically enables the intolerant to destroy tolerance — so tolerance itself requires limits.",
   },
   {
-    id: 30, level: 6, type: 'correction',
+    id: 30, level: 5, type: 'correction',
     question: "Find the error: 'Neither the manager nor the employees was informed of the changes.'",
     options: [
       "'manager' should be 'managers'",
@@ -281,30 +280,30 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "With 'neither…nor', the verb agrees with the nearest subject. The nearest subject is 'employees' (plural), so the verb must be 'were'.",
   },
 
-  // ── Level 7: IELTS Preparation ────────────────────────────────────────
+  // ── Level 6: IELTS Preparation ───────────────────────────────────────
   {
-    id: 31, level: 7, type: 'grammar',
+    id: 31, level: 6, type: 'grammar',
     question: 'The extent ___ technological disruption will reshape labour markets remains deeply contested among economists.',
     options: ['which', 'to which', 'in which', 'for which'],
     correct: 1,
     explanation: "'The extent to which' is the fixed phrase used in formal academic writing. 'To which' is required because we say 'to what extent'.",
   },
   {
-    id: 32, level: 7, type: 'vocabulary',
+    id: 32, level: 6, type: 'vocabulary',
     question: 'Critics argue that the report ___ over the structural causes of poverty, offering only superficial analysis.',
     options: ['glosses', 'ponders', 'elaborates', 'scrutinises'],
     correct: 0,
     explanation: "'Gloss over' means to deal with something too quickly, ignoring important details or problems.",
   },
   {
-    id: 33, level: 7, type: 'grammar',
+    id: 33, level: 6, type: 'grammar',
     question: 'It is imperative that the committee ___ a decision before the funding deadline.',
     options: ['reached', 'reaches', 'reach', 'reaching'],
     correct: 2,
     explanation: "'It is imperative that' requires the subjunctive: the base form 'reach' (no -s, no past tense). This is standard in formal written English.",
   },
   {
-    id: 34, level: 7, type: 'reading',
+    id: 34, level: 6, type: 'reading',
     question: "Cognitive load theory posits that working memory has a finite capacity and that instructional design should minimise extraneous load — processing that does not contribute to learning — while maximising germane load, which builds schemas. What should instructional designers prioritise according to this theory?",
     options: [
       'Maximising the total volume of information presented at once',
@@ -316,7 +315,7 @@ export const QUESTIONS: LevelTestQuestion[] = [
     explanation: "The theory specifies minimising extraneous (irrelevant) load and maximising germane (schema-building) load — not reducing all load equally.",
   },
   {
-    id: 35, level: 7, type: 'correction',
+    id: 35, level: 6, type: 'correction',
     question: "Find the error: 'The research, along with its numerous subsidiary findings, have been published in three peer-reviewed journals.'",
     options: [
       "'research' should be 'researches'",
