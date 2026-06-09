@@ -14,7 +14,10 @@ type Phase = 'list' | 'quiz' | 'results'
 function levelStyle(level: GrammarLevel) {
   if (level === 'basic') return 'bg-forest-pale text-forest'
   if (level === 'elementary') return 'bg-gold-pale text-gold'
-  return 'bg-red-50 text-red-600'
+  if (level === 'pre-intermediate') return 'bg-red-50 text-red-600'
+  if (level === 'intermediate') return 'bg-blue-50 text-blue-600'
+  if (level === 'upper-intermediate') return 'bg-purple-50 text-purple-600'
+  return 'bg-bark/10 text-bark'
 }
 
 function isCorrect(q: GrammarQuestion, ans: string | number | undefined): boolean {
@@ -123,7 +126,7 @@ export default function GrammarPracticePage() {
 
           {/* Level filter */}
           <div className="flex gap-2 flex-wrap">
-            {(['all', 'basic', 'elementary', 'pre-intermediate'] as const).map(l => (
+            {(['all', 'basic', 'elementary', 'pre-intermediate', 'intermediate', 'upper-intermediate'] as const).map(l => (
               <button
                 key={l}
                 onClick={() => setFilterLevel(l)}

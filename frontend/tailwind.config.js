@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  safelist: [
+    'bg-blue-50', 'text-blue-600',
+    'bg-purple-50', 'text-purple-600',
+  ],
   theme: {
     extend: {
       colors: {
