@@ -9,7 +9,7 @@ function navigate(to: string) {
   window.dispatchEvent(new PopStateEvent('popstate'))
 }
 
-type Level = 'basic' | 'elementary' | 'pre-intermediate'
+type Level = 'basic' | 'elementary' | 'pre-intermediate' | 'intermediate' | 'upper-intermediate'
 type Phase = 'select' | 'write' | 'result'
 
 interface Topic {
@@ -31,12 +31,16 @@ const LEVEL_LABELS: Record<Level, string> = {
   'basic': 'Basic',
   'elementary': 'Elementary',
   'pre-intermediate': 'Pre-Intermediate',
+  'intermediate': 'Intermediate',
+  'upper-intermediate': 'Upper-Intermediate',
 }
 
 const LEVEL_MIN_WORDS: Record<Level, number> = {
   'basic': 30,
   'elementary': 50,
   'pre-intermediate': 80,
+  'intermediate': 120,
+  'upper-intermediate': 150,
 }
 
 export default function GeneralWritingPage() {
@@ -138,7 +142,7 @@ export default function GeneralWritingPage() {
 
           {/* Level filter */}
           <div className="flex gap-2 flex-wrap">
-            {(['basic', 'elementary', 'pre-intermediate'] as Level[]).map(l => (
+            {(['basic', 'elementary', 'pre-intermediate', 'intermediate', 'upper-intermediate'] as Level[]).map(l => (
               <button
                 key={l}
                 onClick={() => setLevel(l)}
@@ -183,7 +187,9 @@ export default function GeneralWritingPage() {
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                 level === 'basic' ? 'bg-forest-pale text-forest' :
                 level === 'elementary' ? 'bg-gold-pale text-gold' :
-                'bg-red-50 text-red-600'
+                level === 'pre-intermediate' ? 'bg-red-50 text-red-600' :
+                level === 'intermediate' ? 'bg-blue-50 text-blue-600' :
+                'bg-purple-50 text-purple-600'
               }`}>{LEVEL_LABELS[level]}</span>
             </div>
             <p className="text-bark font-medium leading-relaxed">{selectedTopic.text}</p>
