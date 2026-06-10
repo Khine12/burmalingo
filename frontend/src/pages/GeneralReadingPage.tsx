@@ -14,13 +14,17 @@ type Phase = 'list' | 'reading' | 'results'
 function difficultyStyle(d: GRDifficulty) {
   if (d === 'basic') return 'bg-forest-pale text-forest'
   if (d === 'elementary') return 'bg-gold-pale text-gold'
-  return 'bg-red-50 text-red-600'
+  if (d === 'pre-intermediate') return 'bg-red-50 text-red-600'
+  if (d === 'intermediate') return 'bg-blue-50 text-blue-600'
+  return 'bg-purple-50 text-purple-600'
 }
 
 function difficultyLabel(d: GRDifficulty) {
   if (d === 'basic') return 'Basic'
   if (d === 'elementary') return 'Elementary'
-  return 'Pre-Intermediate'
+  if (d === 'pre-intermediate') return 'Pre-Intermediate'
+  if (d === 'intermediate') return 'Intermediate'
+  return 'Upper-Intermediate'
 }
 
 function isAnswerCorrect(q: GRQuestion, ans: string | number | undefined): boolean {
@@ -159,7 +163,7 @@ export default function GeneralReadingPage() {
 
           {/* Level filter */}
           <div className="flex gap-2 flex-wrap">
-            {(['all', 'basic', 'elementary', 'pre-intermediate'] as const).map(l => (
+            {(['all', 'basic', 'elementary', 'pre-intermediate', 'intermediate', 'upper-intermediate'] as const).map(l => (
               <button
                 key={l}
                 onClick={() => setFilterLevel(l)}
@@ -169,7 +173,7 @@ export default function GeneralReadingPage() {
                     : 'bg-white text-bark-light border-bark/20 hover:border-forest/40'
                 }`}
               >
-                {l === 'all' ? 'All Levels' : l === 'pre-intermediate' ? 'Pre-Intermediate' : l.charAt(0).toUpperCase() + l.slice(1)}
+                {l === 'all' ? 'All Levels' : difficultyLabel(l)}
               </button>
             ))}
           </div>
