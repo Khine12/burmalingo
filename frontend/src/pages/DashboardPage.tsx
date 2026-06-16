@@ -84,6 +84,7 @@ const categories = [
   { icon: '📖', title: 'General Reading',          desc: 'Passages by level',            href: '/reading',        bg: '#c1440e', text: '#ffffff' },
   { icon: '✍️', title: 'General Writing',          desc: 'Writing by level',             href: '/writing-general',bg: '#c1440e', text: '#ffffff' },
   { icon: '💬', title: 'Vocabulary & Daily English',desc: 'Phrases, words & speaking',   href: '/vocabulary',     bg: '#5b3d6e', text: '#ffffff' },
+  { icon: '🎙', title: 'Speaking Practice',         desc: 'Speak on a topic, get scored', href: '/speaking',       bg: '#1a3d5c', text: '#ffffff' },
   { icon: '🎯', title: 'Level Test',               desc: 'Find your starting level',     href: '/level-test',     bg: '#ffffff', text: '#2d1f14', border: true },
 ]
 

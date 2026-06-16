@@ -17,6 +17,7 @@ import VocabularyPage from './pages/VocabularyPage'
 import VocabularyPracticePage from './pages/VocabularyPracticePage'
 import GeneralWritingPage from './pages/GeneralWritingPage'
 import AdminPage from './pages/AdminPage'
+import SpeakingPage from './pages/SpeakingPage'
 import VerifyEmailPage from './pages/VerifyEmailPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
@@ -59,6 +60,7 @@ function Router() {
   if (path === '/ielts/reading') return <ReadingPracticePage />
   if (path === '/writing')         return <WritingPracticePage onBack={() => navigate('/')} />
   if (path === '/writing-general') return <GeneralWritingPage />
+  if (path === '/speaking')        return <SpeakingPage />
   if (path === '/admin')           return <AdminPage />
   if (path === '/verify-email')    return <VerifyEmailPage />
   if (path === '/forgot-password') return <ForgotPasswordPage />

@@ -104,4 +104,55 @@ export const generalWritingApi = {
     api.post('/general-writing/grade', { topic, essay, level }),
 }
 
+// Speaking
+export interface SpeakingQuota {
+  is_pro: boolean
+  used?: number
+  limit: number
+  period_end?: string | null
+  subscription_expired?: boolean
+}
+
+export interface SpeakingResult {
+  transcript: string
+  pronunciation_score: number | null
+  accuracy_score: number | null
+  fluency_score: number | null
+  completeness_score: number | null
+  prosody_score: number | null
+  overall_score: number | null
+  scored_at: string
+  quota: { used: number; limit: number; period_end: string | null }
+}
+
+export const speakingApi = {
+  getQuota: () => api.get<SpeakingQuota>('/speaking/quota'),
+
+  // Uses fetch instead of the axios instance so the browser can set
+  // Content-Type: multipart/form-data with the correct boundary itself.
+  // The axios instance's default Content-Type: application/json would otherwise
+  // override the boundary and cause FastAPI to return 422.
+  assess: async (audio: Blob, promptText: string): Promise<{ data: SpeakingResult }> => {
+    const form = new FormData()
+    form.append('audio', audio, audio.type.includes('mp4') ? 'recording.mp4' : 'recording.webm')
+    form.append('prompt_text', promptText)
+
+    const token = localStorage.getItem('access_token')
+    const res = await fetch(`${baseURL}/speaking/assess`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    })
+
+    if (!res.ok) {
+      const body: unknown = await res.json().catch(() => ({}))
+      const err = new Error(String(res.status)) as Error & { response: unknown }
+      err.response = { status: res.status, data: body }
+      throw err
+    }
+
+    return { data: await res.json() as SpeakingResult }
+  },
+}
+
 export default api
