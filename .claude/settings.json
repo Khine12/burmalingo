@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:8000/api/admin/upgrade -H 'Content-Type: application/json' -d '{\"email\":\"khinezarheinrubyaura@gmail.com\",\"admin_key\":\"burmalingo-admin-2026\"}')"
+    ]
+  }
+}
