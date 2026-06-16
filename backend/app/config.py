@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     RESEND_API_KEY: str = ""
     FRONTEND_URL: str = "https://burmalingo.vercel.app"
 
+    AZURE_SPEECH_KEY: str = ""
+    AZURE_SPEECH_REGION: str = ""
+
     model_config = ConfigDict(env_file=".env")
 
 settings = Settings()

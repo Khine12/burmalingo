@@ -45,21 +45,30 @@ class AuthService:
     def register(email: str, password: str, name: str, db: Session) -> User:
         if db.query(User).filter(User.email == email).first():
             raise HTTPException(status_code=400, detail="Email already registered")
+
+        # Always generate a token so the column is never NULL (the DB constraint
+        # may be NOT NULL even if the model says nullable=True, because create_all
+        # only sets constraints at table-creation time and never alters them).
+        # When RESEND_API_KEY is not set (local dev) we skip sending the email
+        # and mark the account verified immediately so login works right away.
+        email_configured = bool(settings.RESEND_API_KEY)
         token = secrets.token_urlsafe(32)
+
         user = User(
             email=email,
             name=name,
             hashed_password=AuthService.hash_password(password),
             verification_token=token,
-            is_verified=False,
+            is_verified=not email_configured,
         )
         db.add(user)
         db.commit()
         db.refresh(user)
-        try:
-            EmailService.send_verification_email(email, name, token)
-        except Exception:
-            pass  # don't block registration if email fails
+        if email_configured:
+            try:
+                EmailService.send_verification_email(email, name, token)
+            except Exception:
+                pass  # don't block registration if email fails
         return user
 
     @staticmethod
@@ -77,7 +86,7 @@ class AuthService:
         user = db.query(User).filter(User.email == email).first()
         if not user or not AuthService.verify_password(password, user.hashed_password):
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        if not user.is_verified:
+        if not user.is_verified and settings.RESEND_API_KEY:
             raise HTTPException(status_code=403, detail="Please verify your email before logging in")
         return {"access_token": AuthService.create_token(user.id), "token_type": "bearer"}
 

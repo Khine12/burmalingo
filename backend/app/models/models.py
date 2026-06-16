@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Text, Float, Boolean, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -22,24 +22,30 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     tier            = Column(Enum(TierEnum), default=TierEnum.free)
     current_level   = Column(Integer, default=5)
-    stripe_customer_id = Column(String, nullable=True)
-    is_verified = Column(Boolean, default=False)
-    verification_token = Column(String, nullable=True)
-    reset_token = Column(String, nullable=True)
+    stripe_customer_id      = Column(String, nullable=True)
+    stripe_subscription_id  = Column(String, nullable=True)
+    stripe_period_start     = Column(DateTime(timezone=True), nullable=True)
+    stripe_period_end       = Column(DateTime(timezone=True), nullable=True)
+    manual_period_start     = Column(DateTime(timezone=True), nullable=True)
+    manual_period_end       = Column(DateTime(timezone=True), nullable=True)
+    is_verified         = Column(Boolean, default=False)
+    verification_token  = Column(String, nullable=True)
+    reset_token         = Column(String, nullable=True)
     reset_token_expires = Column(DateTime(timezone=True), nullable=True)
-    created_at      = Column(DateTime(timezone=True), server_default=func.now())
+    created_at          = Column(DateTime(timezone=True), server_default=func.now())
 
-    reviews         = relationship("ReviewHistory", back_populates="user")
+    reviews              = relationship("ReviewHistory", back_populates="user")
+    speaking_assessments = relationship("SpeakingAssessment", back_populates="user")
 
 class VocabCard(Base):
     __tablename__ = "vocab_cards"
 
     id         = Column(Integer, primary_key=True, index=True)
     english    = Column(String, nullable=False)
-    pos        = Column(String)                      # part of speech
+    pos        = Column(String)
     definition = Column(String, nullable=False)
     example    = Column(String)
-    level      = Column(Integer, nullable=False)     # 1-10
+    level      = Column(Integer, nullable=False)
 
 class ReviewHistory(Base):
     __tablename__ = "review_history"
@@ -65,3 +71,20 @@ class TranslationPrompt(Base):
     model_answer = Column(String, nullable=False)
     level        = Column(Integer, nullable=False)
     is_active    = Column(Boolean, default=True)
+
+class SpeakingAssessment(Base):
+    __tablename__ = "speaking_assessments"
+
+    id                  = Column(Integer, primary_key=True, index=True)
+    user_id             = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    scored_at           = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    prompt_text         = Column(Text, nullable=True)
+    transcript          = Column(Text, nullable=True)
+    pronunciation_score = Column(Float, nullable=True)
+    accuracy_score      = Column(Float, nullable=True)
+    fluency_score       = Column(Float, nullable=True)
+    completeness_score  = Column(Float, nullable=True)
+    prosody_score       = Column(Float, nullable=True)
+    overall_score       = Column(Float, nullable=True)
+
+    user = relationship("User", back_populates="speaking_assessments")

@@ -1,0 +1,6 @@
+# Railway uses nixpacks to build this Python service.
+# ffmpeg is required by the speaking assessment endpoint to convert browser
+# audio (webm/opus, mp4/aac) to raw PCM before passing it to Azure Speech SDK.
+
+[phases.setup]
+nixPkgs = ["ffmpeg"]
