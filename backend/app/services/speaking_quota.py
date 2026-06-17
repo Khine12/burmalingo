@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models.models import SpeakingAssessment, TierEnum
 
-SPEAKING_QUOTA = 15
+SPEAKING_QUOTA = 25
 
 
 def get_current_period(user) -> tuple[Optional[datetime], Optional[datetime]]:
