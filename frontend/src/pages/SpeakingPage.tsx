@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { speakingApi, type SpeakingQuota, type SpeakingResult } from '../api/client'
-import { speakingTopics, type SpeakingTopic } from '../data/speaking_topics'
+import { speakingTopics, SPEAKING_LEVELS, type SpeakingTopic } from '../data/speaking_topics'
 import { awardXP } from './DashboardPage'
 
 function navigate(to: string) {
@@ -15,15 +15,21 @@ function formatDate(iso: string | null | undefined) {
 }
 
 const LEVEL_LABEL: Record<string, string> = {
-  beginner: 'Beginner',
-  intermediate: 'Intermediate',
-  advanced: 'Advanced',
+  basic:               'Basic',
+  elementary:          'Elementary',
+  intermediate:        'Intermediate',
+  'upper-intermediate':'Upper-Intermediate',
+  advanced:            'Advanced',
+  ielts:               'IELTS',
 }
 
 const LEVEL_COLOR: Record<string, string> = {
-  beginner: '#1a3a2a',
-  intermediate: '#b45309',
-  advanced: '#c1440e',
+  basic:               '#166534',
+  elementary:          '#1a3a2a',
+  intermediate:        '#b45309',
+  'upper-intermediate':'#92400e',
+  advanced:            '#c1440e',
+  ielts:               '#6d28d9',
 }
 
 // ── Score bar ──────────────────────────────────────────────────────────────────
@@ -219,9 +225,6 @@ function SpeakingPractice({
             style={{ backgroundColor: LEVEL_COLOR[topic.level] ?? '#1a3a2a' }}
           >
             {LEVEL_LABEL[topic.level] ?? topic.level}
-          </span>
-          <span className="text-[10px] text-bark-light uppercase tracking-wide">
-            {topic.track === 'ielts' ? 'IELTS Speaking' : 'Everyday English'}
           </span>
         </div>
         <p className="text-bark font-medium leading-relaxed">{topic.prompt}</p>
@@ -450,8 +453,9 @@ export default function SpeakingPage() {
 
   if (!user) { navigate('/login'); return null }
 
-  const everydayTopics = speakingTopics.filter(t => t.track === 'everyday')
-  const ieltsTopics    = speakingTopics.filter(t => t.track === 'ielts')
+  const topicsByLevel = SPEAKING_LEVELS
+    .map(lvl => ({ ...lvl, topics: speakingTopics.filter(t => t.level === lvl.id) }))
+    .filter(lvl => lvl.topics.length > 0)
 
   const header = (showBack: boolean) => (
     <header className="bg-forest border-b border-forest-mid sticky top-0 z-10">
@@ -544,25 +548,16 @@ export default function SpeakingPage() {
           </div>
         )}
 
-        {/* Everyday English */}
-        <section>
-          <h2 className="font-serif text-base font-bold text-bark mb-3">Everyday English</h2>
-          <div className="space-y-2">
-            {everydayTopics.map(topic => (
-              <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
-            ))}
-          </div>
-        </section>
-
-        {/* IELTS Speaking */}
-        <section>
-          <h2 className="font-serif text-base font-bold text-bark mb-3">IELTS Speaking</h2>
-          <div className="space-y-2">
-            {ieltsTopics.map(topic => (
-              <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
-            ))}
-          </div>
-        </section>
+        {topicsByLevel.map(lvl => (
+          <section key={lvl.id}>
+            <h2 className="font-serif text-base font-bold text-bark mb-3">{lvl.label}</h2>
+            <div className="space-y-2">
+              {lvl.topics.map(topic => (
+                <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
+              ))}
+            </div>
+          </section>
+        ))}
       </main>
     </div>
   )
