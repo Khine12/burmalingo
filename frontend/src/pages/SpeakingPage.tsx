@@ -17,9 +17,9 @@ function formatDate(iso: string | null | undefined) {
 const LEVEL_LABEL: Record<string, string> = {
   basic:               'Basic',
   elementary:          'Elementary',
-  intermediate:        'Intermediate',
-  'upper-intermediate':'Upper-Intermediate',
-  advanced:            'Advanced',
+  intermediate:        'Pre-Intermediate',
+  'upper-intermediate':'Intermediate',
+  advanced:            'Upper-Intermediate',
   ielts:               'IELTS',
 }
 
@@ -439,6 +439,7 @@ export default function SpeakingPage() {
   const { user } = useAuth()
   const [selected, setSelected] = useState<SpeakingTopic | null>(null)
   const [quota, setQuota] = useState<SpeakingQuota | null>(null)
+  const [activeLevel, setActiveLevel] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -548,7 +549,35 @@ export default function SpeakingPage() {
           </div>
         )}
 
-        {topicsByLevel.map(lvl => (
+        {/* Level filter pills */}
+        <div className="flex gap-2 overflow-x-auto pb-0.5 -mx-6 px-6">
+          <button
+            onClick={() => setActiveLevel(null)}
+            className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+              activeLevel === null
+                ? 'bg-forest text-white'
+                : 'bg-white border border-bark/15 text-bark hover:border-forest/30'
+            }`}
+          >
+            All
+          </button>
+          {SPEAKING_LEVELS.map(lvl => (
+            <button
+              key={lvl.id}
+              onClick={() => setActiveLevel(activeLevel === lvl.id ? null : lvl.id)}
+              className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+                activeLevel === lvl.id
+                  ? 'text-white'
+                  : 'bg-white border border-bark/15 text-bark hover:border-forest/30'
+              }`}
+              style={activeLevel === lvl.id ? { backgroundColor: LEVEL_COLOR[lvl.id] } : undefined}
+            >
+              {lvl.label}
+            </button>
+          ))}
+        </div>
+
+        {(activeLevel ? topicsByLevel.filter(lvl => lvl.id === activeLevel) : topicsByLevel).map(lvl => (
           <section key={lvl.id}>
             <h2 className="font-serif text-base font-bold text-bark mb-3">{lvl.label}</h2>
             <div className="space-y-2">

@@ -25,9 +25,9 @@ export type SpeakingTopic = {
 export const SPEAKING_LEVELS: { id: SpeakingLevel; label: string }[] = [
   { id: "basic",              label: "Basic" },
   { id: "elementary",         label: "Elementary" },
-  { id: "intermediate",       label: "Intermediate" },
-  { id: "upper-intermediate", label: "Upper-Intermediate" },
-  { id: "advanced",           label: "Advanced" },
+  { id: "intermediate",       label: "Pre-Intermediate" },
+  { id: "upper-intermediate", label: "Intermediate" },
+  { id: "advanced",           label: "Upper-Intermediate" },
   { id: "ielts",              label: "IELTS Speaking" },
 ];
 
