@@ -6,7 +6,7 @@ const features = [
   { icon: '💬', label: 'Vocabulary', sub: 'Daily phrases & words' },
   { icon: '🎧', label: 'Listening', sub: 'Coming soon' },
   { icon: '🎯', label: 'Level Test', sub: 'Find your level' },
-  { icon: '🗣️', label: 'Speaking', sub: 'Coming soon' },
+  { icon: '🗣️', label: 'Speaking', sub: 'AI pronunciation scoring' },
 ]
 
 export default function Features() {

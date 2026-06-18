@@ -9,7 +9,7 @@ export default function Hero({ onDemo }: HeroProps) {
         English. Explained<br/><span className="text-yellow-400 italic">in your language.</span>
       </h1>
       <p className="text-white/65 text-sm max-w-lg mx-auto mb-9 leading-relaxed">
-        Grammar explained in Burmese. Spaced repetition vocabulary. AI writing feedback — built by a Burmese immigrant who studied English before arriving in the US, and learned what real-world fluency actually takes after 3 years of living it.
+        Grammar explained in Burmese. Spaced repetition vocabulary. AI writing and speaking feedback — built by a Burmese immigrant who studied English before arriving in the US, and learned what real-world fluency actually takes after 3 years of living it.
       </p>
       <div className="flex gap-2.5 justify-center flex-wrap">
         <button onClick={onDemo} className="bg-yellow-600 text-white font-bold px-7 py-4 rounded-lg text-base hover:-translate-y-0.5 transition-transform">Try It Free →</button>
