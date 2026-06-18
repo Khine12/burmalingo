@@ -2,8 +2,8 @@ const levels = [
   { n: 1, name: 'Basic', desc: 'Present simple, past simple, articles, prepositions, common vocabulary', available: true },
   { n: 2, name: 'Elementary', desc: 'Present continuous, past continuous, comparatives, modal verbs, conjunctions', available: true },
   { n: 3, name: 'Pre-Intermediate', desc: 'Present perfect, passive voice, conditionals, phrasal verbs, reported speech', available: true },
-  { n: 4, name: 'Intermediate', desc: 'Complex grammar, formal vs informal register, advanced vocabulary', available: false },
-  { n: 5, name: 'Upper-Intermediate', desc: 'Idiomatic expressions, academic writing, nuanced grammar', available: false },
+  { n: 4, name: 'Intermediate', desc: 'Complex grammar, formal vs informal register, advanced vocabulary', available: true },
+  { n: 5, name: 'Upper-Intermediate', desc: 'Idiomatic expressions, academic writing, nuanced grammar', available: true },
   { n: 6, name: 'IELTS Preparation', desc: 'IELTS writing and reading practice with AI examiner feedback', available: true },
 ]
 
