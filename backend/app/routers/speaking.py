@@ -91,6 +91,7 @@ async def assess_pronunciation(
 
     # ── 2. read and size-check the upload ────────────────────────────────────
     audio_bytes = await audio.read()
+    print(f"[speaking] received audio content_type={audio.content_type} size={len(audio_bytes)}", flush=True)
     if not audio_bytes:
         raise HTTPException(status_code=422, detail="Audio file is empty")
     if len(audio_bytes) > _MAX_AUDIO_BYTES:

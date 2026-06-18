@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { speakingApi, type SpeakingQuota, type SpeakingResult } from '../api/client'
-import { speakingTopics, type SpeakingTopic } from '../data/speaking_topics'
+import { speakingTopics, SPEAKING_LEVELS, type SpeakingTopic } from '../data/speaking_topics'
 import { awardXP } from './DashboardPage'
 
 function navigate(to: string) {
@@ -15,15 +15,21 @@ function formatDate(iso: string | null | undefined) {
 }
 
 const LEVEL_LABEL: Record<string, string> = {
-  beginner: 'Beginner',
-  intermediate: 'Intermediate',
-  advanced: 'Advanced',
+  basic:               'Basic',
+  elementary:          'Elementary',
+  intermediate:        'Pre-Intermediate',
+  'upper-intermediate':'Intermediate',
+  advanced:            'Upper-Intermediate',
+  ielts:               'IELTS',
 }
 
 const LEVEL_COLOR: Record<string, string> = {
-  beginner: '#1a3a2a',
-  intermediate: '#b45309',
-  advanced: '#c1440e',
+  basic:               '#166534',
+  elementary:          '#1a3a2a',
+  intermediate:        '#b45309',
+  'upper-intermediate':'#92400e',
+  advanced:            '#c1440e',
+  ielts:               '#6d28d9',
 }
 
 // ── Score bar ──────────────────────────────────────────────────────────────────
@@ -67,6 +73,10 @@ function SpeakingPractice({
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const animFrameRef = useRef<number | null>(null)
+  const MAX_SECS = 180
 
   function startTimer() {
     setSecs(0)
@@ -74,6 +84,10 @@ function SpeakingPractice({
   }
   function clearTimer() {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
+  }
+  function stopWaveform() {
+    if (animFrameRef.current) { cancelAnimationFrame(animFrameRef.current); animFrameRef.current = null }
+    if (audioCtxRef.current) { audioCtxRef.current.close(); audioCtxRef.current = null }
   }
 
   async function startRecording() {
@@ -89,6 +103,33 @@ function SpeakingPractice({
         await submitAudio(blob)
       }
       recorderRef.current = recorder
+
+      const audioCtx = new AudioContext()
+      audioCtxRef.current = audioCtx
+      const analyser = audioCtx.createAnalyser()
+      analyser.fftSize = 64
+      audioCtx.createMediaStreamSource(stream).connect(analyser)
+      const dataArr = new Uint8Array(analyser.frequencyBinCount)
+      function drawFrame() {
+        animFrameRef.current = requestAnimationFrame(drawFrame)
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx2d = canvas.getContext('2d')
+        if (!ctx2d) return
+        const w = canvas.offsetWidth
+        if (canvas.width !== w) canvas.width = w
+        analyser.getByteFrequencyData(dataArr)
+        ctx2d.clearRect(0, 0, canvas.width, canvas.height)
+        const n = dataArr.length
+        const barW = canvas.width / n - 1
+        for (let i = 0; i < n; i++) {
+          const barH = Math.max(2, (dataArr[i] / 255) * canvas.height)
+          ctx2d.fillStyle = '#1B4332'
+          ctx2d.fillRect(i * (barW + 1), canvas.height - barH, barW, barH)
+        }
+      }
+      drawFrame()
+
       recorder.start(100)
       setPhase('recording')
       startTimer()
@@ -100,6 +141,7 @@ function SpeakingPractice({
 
   function stopRecording() {
     clearTimer()
+    stopWaveform()
     if (recorderRef.current && recorderRef.current.state !== 'inactive') {
       recorderRef.current.stop()
     }
@@ -125,7 +167,7 @@ function SpeakingPractice({
         : rawDetail != null ? JSON.stringify(rawDetail) : undefined
       console.error('[Speaking] assess error', status, rawDetail)
       if (status === 429) {
-        setErrorMsg('You have used all 15 assessments this period.')
+        setErrorMsg('You have used all 25 assessments this period.')
       } else if (status === 402) {
         setErrorMsg('Your subscription has expired. Please renew to continue.')
       } else if (status === 403) {
@@ -148,6 +190,12 @@ function SpeakingPractice({
     setErrorMsg('')
     setSecs(0)
   }
+
+  useEffect(() => {
+    if (phase === 'recording' && secs >= MAX_SECS) stopRecording()
+  }, [secs, phase]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => () => { clearTimer(); stopWaveform() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isNotPro = quota && !quota.is_pro
   const isExpired = quota?.subscription_expired
@@ -177,9 +225,6 @@ function SpeakingPractice({
             style={{ backgroundColor: LEVEL_COLOR[topic.level] ?? '#1a3a2a' }}
           >
             {LEVEL_LABEL[topic.level] ?? topic.level}
-          </span>
-          <span className="text-[10px] text-bark-light uppercase tracking-wide">
-            {topic.track === 'ielts' ? 'IELTS Speaking' : 'Everyday English'}
           </span>
         </div>
         <p className="text-bark font-medium leading-relaxed">{topic.prompt}</p>
@@ -262,9 +307,11 @@ function SpeakingPractice({
                   <div className="w-7 h-7 rounded-sm bg-white" />
                 </button>
               </div>
+              <canvas ref={canvasRef} height={48} className="w-full rounded-lg" />
               <div className="text-center">
                 <p className="font-mono text-2xl font-bold text-bark tabular-nums">
                   {String(Math.floor(secs / 60)).padStart(2, '0')}:{String(secs % 60).padStart(2, '0')}
+                  <span className="text-sm font-normal text-bark-light ml-2">/ 3:00</span>
                 </p>
                 <p className="text-sm text-bark-light mt-1">Recording… tap to stop</p>
               </div>
@@ -392,6 +439,7 @@ export default function SpeakingPage() {
   const { user } = useAuth()
   const [selected, setSelected] = useState<SpeakingTopic | null>(null)
   const [quota, setQuota] = useState<SpeakingQuota | null>(null)
+  const [activeLevel, setActiveLevel] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -400,14 +448,15 @@ export default function SpeakingPage() {
         .then(res => setQuota(res.data))
         .catch(() => {})
     } else {
-      setQuota({ is_pro: false, limit: 15 })
+      setQuota({ is_pro: false, limit: 25 })
     }
   }, [user])
 
   if (!user) { navigate('/login'); return null }
 
-  const everydayTopics = speakingTopics.filter(t => t.track === 'everyday')
-  const ieltsTopics    = speakingTopics.filter(t => t.track === 'ielts')
+  const topicsByLevel = SPEAKING_LEVELS
+    .map(lvl => ({ ...lvl, topics: speakingTopics.filter(t => t.level === lvl.id) }))
+    .filter(lvl => lvl.topics.length > 0)
 
   const header = (showBack: boolean) => (
     <header className="bg-forest border-b border-forest-mid sticky top-0 z-10">
@@ -478,7 +527,7 @@ export default function SpeakingPage() {
             <div>
               <p className="text-sm font-semibold text-bark">Pro feature</p>
               <p className="text-xs text-bark-light mt-0.5">
-                Upgrade to unlock AI pronunciation scoring — 15 assessments per month.
+                Upgrade to unlock AI pronunciation scoring — 25 assessments per month.
               </p>
             </div>
             <a
@@ -500,25 +549,44 @@ export default function SpeakingPage() {
           </div>
         )}
 
-        {/* Everyday English */}
-        <section>
-          <h2 className="font-serif text-base font-bold text-bark mb-3">Everyday English</h2>
-          <div className="space-y-2">
-            {everydayTopics.map(topic => (
-              <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
-            ))}
-          </div>
-        </section>
+        {/* Level filter pills */}
+        <div className="flex gap-2 overflow-x-auto pb-0.5 -mx-6 px-6">
+          <button
+            onClick={() => setActiveLevel(null)}
+            className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+              activeLevel === null
+                ? 'bg-forest text-white'
+                : 'bg-white border border-bark/15 text-bark hover:border-forest/30'
+            }`}
+          >
+            All
+          </button>
+          {SPEAKING_LEVELS.map(lvl => (
+            <button
+              key={lvl.id}
+              onClick={() => setActiveLevel(activeLevel === lvl.id ? null : lvl.id)}
+              className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
+                activeLevel === lvl.id
+                  ? 'text-white'
+                  : 'bg-white border border-bark/15 text-bark hover:border-forest/30'
+              }`}
+              style={activeLevel === lvl.id ? { backgroundColor: LEVEL_COLOR[lvl.id] } : undefined}
+            >
+              {lvl.label}
+            </button>
+          ))}
+        </div>
 
-        {/* IELTS Speaking */}
-        <section>
-          <h2 className="font-serif text-base font-bold text-bark mb-3">IELTS Speaking</h2>
-          <div className="space-y-2">
-            {ieltsTopics.map(topic => (
-              <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
-            ))}
-          </div>
-        </section>
+        {(activeLevel ? topicsByLevel.filter(lvl => lvl.id === activeLevel) : topicsByLevel).map(lvl => (
+          <section key={lvl.id}>
+            <h2 className="font-serif text-base font-bold text-bark mb-3">{lvl.label}</h2>
+            <div className="space-y-2">
+              {lvl.topics.map(topic => (
+                <TopicCard key={topic.id} topic={topic} onClick={() => setSelected(topic)} />
+              ))}
+            </div>
+          </section>
+        ))}
       </main>
     </div>
   )
