@@ -1,25 +1,22 @@
 # BurmaLingo
+
 **Live:** https://burmalingo.vercel.app
 
-English learning web app built specifically for Burmese speakers — by a Burmese immigrant who lived this problem from both sides.
+An English-learning web app built specifically for Burmese speakers — by a Burmese immigrant who lived this problem from both sides. Live in production with paying subscribers.
 
 ---
 
 ## The Problem
 
-In Myanmar, a single level of English class from a well-known teacher costs roughly half a month's basic salary — for a seat in a 100-person Zoom class where the teacher doesn't know your name. Cheaper video courses cover only one level with no structured progression. YouTube is free but completely unstructured. And even if a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
+In Myanmar, a single level of English class from a well-known teacher costs roughly half a month's basic salary — for a seat in a 100-person Zoom class where the teacher doesn't know your name. Cheaper video courses cover only one level with no structured progression. YouTube is free but completely unstructured. And even when a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
 
-BurmaLingo is the structured, affordable alternative.
-
----
+BurmaLingo is the structured, affordable alternative — grammar explained *in Burmese*, a curriculum that builds level by level, and AI feedback on both writing and speaking.
 
 ## The Founder's Path
 
 Self-study → Zoom classes → IELTS prep → moved to the US in February 2023 → 3 years living and working in an English environment.
 
 That full journey — knowing what worked at each stage and what was a waste of money — is what this curriculum is built from.
-
----
 
 ## Tech Stack
 
@@ -28,13 +25,13 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Frontend | React + TypeScript + Tailwind CSS → Vercel |
 | Backend | FastAPI (Python) → Railway |
 | Database | PostgreSQL → Neon |
+| Migrations | Alembic |
 | Auth | JWT + email verification |
 | Payments | Stripe + manual upgrade for Myanmar users |
 | AI Feedback | OpenAI GPT-4o |
+| Speech / Pronunciation | Azure AI Speech + ffmpeg (audio conversion) |
 | Email | Resend |
 | CI/CD | GitHub Actions |
-
----
 
 ## Curriculum
 
@@ -43,19 +40,19 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | 1 | Basic | ✅ Live |
 | 2 | Elementary | ✅ Live |
 | 3 | Pre-Intermediate | ✅ Live |
-| 4 | Intermediate | 🔄 Coming soon |
-| 5 | Upper-Intermediate | 🔄 Coming soon |
+| 4 | Intermediate | ✅ Live |
+| 5 | Upper-Intermediate | ✅ Live |
 | 6 | IELTS Preparation | ✅ Live |
-
----
 
 ## What's Built
 
-**Grammar Practice** — Multiple choice and fill-in-blank lessons across Basic, Elementary, and Pre-Intermediate. One question at a time with instant feedback and clear explanations in simple English.
+**Speaking Practice** *(new)* — Record yourself responding to a prompt; the app converts your audio (WebM → 16 kHz WAV via ffmpeg) and runs Azure AI Speech unscripted pronunciation assessment, scoring **accuracy, fluency, completeness, and prosody** on your actual speech — combined with GPT-4o for grammar and topic feedback. ~60 prompts organized by level from Basic to IELTS. Pro: 25 sessions/month.
+
+**Grammar Practice** — Multiple choice and fill-in-blank lessons across all levels, Basic through Upper-Intermediate. One question at a time with instant feedback and clear explanations in simple English.
 
 **General Reading** — Real-life passages about living in an English-speaking world: going to the doctor, renting an apartment, taking the bus, starting a new job. Multiple choice, True/False/Not Given, fill-in-blank, and vocabulary questions.
 
-**General Writing** — Topics across all three levels with AI feedback: grammar corrections, star rating, and a model answer. Structured outlines provided for emails and letters. Relevance check detects off-topic answers before grading.
+**General Writing** — Topics across all levels, Basic through Upper-Intermediate, with AI feedback: grammar corrections, star rating, and a model answer. Structured outlines provided for emails and letters. Relevance check detects off-topic answers before grading.
 
 **IELTS Writing Practice** — 35 Task 2 topics with GPT-4o band scoring across all 4 IELTS criteria. Feedback references exact phrases from the student's writing. Relevance check included.
 
@@ -65,17 +62,15 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 **Level Test** — 35-question placement test to find your starting level automatically.
 
-**XP & Progress System** — 10 XP per session, daily streak tracking, weekly goal, and 6 progression levels from Beginner to IELTS Ready.
+**XP & Progress System** — 10 XP per session, daily streak tracking, weekly goals, and 6 progression levels from Beginner to IELTS Ready.
 
-**Stripe Payments** — $5/month Pro subscription with 3-day free trial and webhook-based tier control. Myanmar users pay via KBZPay/Wave Money through Facebook with manual tier upgrade.
+**Payments** — $7/month Pro subscription (30% off the $10 regular price) with a 3-day free trial and webhook-based tier control. Myanmar users pay via KBZPay / Wave Money through Facebook with manual tier upgrade.
 
-**Email Verification & Password Reset** — Verification email sent on registration via Resend. Password reset flow with time-limited tokens.
+**Usage Metering** — Per-user quotas with automatic period resets; the Pro speaking quota is synced to Stripe billing periods (and to manual periods for Myanmar users).
 
-**Free Tier Enforcement** — Usage limits tracked per user with automatic period resets.
+**Email Verification & Password Reset** — Verification email sent on registration via Resend; password reset flow with time-limited tokens.
 
 **Admin Dashboard** — Manual Pro upgrade/downgrade by email, user list, and feedback viewer.
-
----
 
 ## Free vs Pro
 
@@ -85,52 +80,60 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Reading — IELTS + General combined | 3 per 2 weeks | Unlimited |
 | Grammar | 1 lesson per week | Unlimited |
 | Vocabulary & Phrases | 1 lesson per week | Unlimited |
+| Speaking — AI pronunciation scoring | ❌ | 25 sessions/month |
 | Level Test | Once only | Retake anytime |
 | AI feedback & band scores | ❌ | ✅ |
 
-$5/month · 3-day free trial · Cancel anytime
+**$7/month · 3-day free trial · Cancel anytime**
 
-Myanmar users: KBZPay / Wave Money via Facebook → manual tier upgrade
-
----
+> Myanmar users: KBZPay / Wave Money via Facebook → manual tier upgrade
 
 ## Local Setup
 
 **Backend**
+
 ```bash
 cd backend
 python -m venv venv
-source venv/Scripts/activate  # Mac/Linux: source venv/bin/activate
+# Windows (PowerShell): .\venv\Scripts\Activate.ps1
+# Mac/Linux:            source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
+alembic upgrade head          # apply database migrations
 uvicorn app.main:app --reload
 ```
+
+> Requires **ffmpeg** installed and on your PATH — used by the Speaking feature to convert recorded audio.
+
 API: http://localhost:8000 · Docs: http://localhost:8000/docs
 
 **Frontend**
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
 App: http://localhost:5173
 
 **Tests**
+
 ```bash
 cd backend
 pytest tests/ -v
 ```
 
----
-
 ## Environment Variables
 
-```env
+```
 DATABASE_URL=
 SECRET_KEY=
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=10080
 OPENAI_API_KEY=
+AZURE_SPEECH_KEY=
+AZURE_SPEECH_REGION=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_ID=
@@ -138,8 +141,6 @@ ADMIN_SECRET_KEY=
 RESEND_API_KEY=
 FRONTEND_URL=
 ```
-
----
 
 ## Project Structure
 
@@ -150,8 +151,8 @@ burmalingo/
 │   │   ├── api/           # axios client + JWT interceptor
 │   │   ├── components/    # landing page components
 │   │   ├── context/       # AuthContext
-│   │   ├── data/          # grammar, vocabulary, reading, writing data
-│   │   ├── pages/         # route-level pages
+│   │   ├── data/          # grammar, vocabulary, reading, writing, speaking data
+│   │   ├── pages/         # route-level pages (incl. SpeakingPage)
 │   │   ├── types/         # TypeScript interfaces
 │   │   └── utils/         # XP system, limits, activity helpers
 │   └── ...
@@ -159,48 +160,45 @@ burmalingo/
 ├── backend/
 │   ├── app/
 │   │   ├── models/        # SQLAlchemy models
-│   │   ├── routers/       # auth, writing, general_writing, admin, feedback
-│   │   ├── services/      # WritingService, GeneralWritingService, EmailService
+│   │   ├── routers/       # auth, writing, general_writing, speaking, admin, feedback
+│   │   ├── services/      # WritingService, GeneralWritingService, AzureSpeechService, speaking quota, EmailService
 │   │   └── config.py
+│   ├── alembic/           # database migrations
 │   ├── tests/
 │   └── requirements.txt
 │
 └── .github/workflows/ci.yml
 ```
 
----
-
 ## Deployment
 
 | Layer | Service |
 |---|---|
-| Frontend | Vercel — auto-deploys from main |
+| Frontend | Vercel — auto-deploys from `main` |
 | Backend | Railway |
 | Database | Neon PostgreSQL |
 
----
-
 ## Status
 
-🚀 **Launched May 2026**
+🚀 **Launched May 2026** · Speaking added June 2026
 
-✅ Landing page  
-✅ CI/CD pipeline  
-✅ JWT auth + email verification + password reset  
-✅ Stripe payments + 3-day free trial  
-✅ Free tier enforcement  
-✅ Grammar Practice — Basic, Elementary, Pre-Intermediate  
-✅ General Reading — Basic, Elementary  
-✅ General Writing with AI feedback — Basic, Elementary, Pre-Intermediate  
-✅ IELTS Writing with GPT-4o band scoring  
-✅ IELTS Reading  
-✅ Vocabulary & Daily English  
-✅ XP system + streak tracking  
-✅ Admin dashboard + manual Pro upgrade  
-✅ Feedback collection system  
-🔄 Intermediate + Upper-Intermediate content  
-🔄 Listening Practice  
-🔄 Speaking Practice (future)  
+- ✅ Landing page
+- ✅ CI/CD pipeline
+- ✅ JWT auth + email verification + password reset
+- ✅ Stripe payments + 3-day free trial
+- ✅ Free tier enforcement
+- ✅ Grammar Practice — Basic, Elementary, Pre-Intermediate
+- ✅ General Reading
+- ✅ General Writing with AI feedback
+- ✅ IELTS Writing with GPT-4o band scoring
+- ✅ IELTS Reading
+- ✅ Vocabulary & Daily English
+- ✅ **Speaking Practice — Azure AI Speech pronunciation scoring (Basic → IELTS)**
+- ✅ XP system + streak tracking
+- ✅ Admin dashboard + manual Pro upgrade
+- ✅ Feedback collection system
+- ✅ Full curriculum — all 6 levels live (Basic → IELTS)
+- 🔄 Listening Practice
 
 ---
 
