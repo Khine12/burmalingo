@@ -25,13 +25,16 @@ export const LEVEL_LABEL: Record<string, string> = {
   ielts_preparation: 'IELTS Prep',
 }
 
+// Matches the level palette used on General Reading / General Writing / Grammar
+// (forest, gold, red, blue, purple) so the same level always reads as the same
+// color across the app — plus a distinct slate for the IELTS-only level.
 export const LEVEL_COLOR: Record<string, string> = {
-  beginner: '#166534',
-  elementary: '#1a3a2a',
-  pre_intermediate: '#b45309',
-  intermediate: '#92400e',
-  upper_intermediate: '#c1440e',
-  ielts_preparation: '#5b3d6e',
+  beginner: '#1B4332',
+  elementary: '#C8941A',
+  pre_intermediate: '#dc2626',
+  intermediate: '#2563eb',
+  upper_intermediate: '#9333ea',
+  ielts_preparation: '#475569',
 }
 
 // ── Question block ───────────────────────────────────────────────────────────
