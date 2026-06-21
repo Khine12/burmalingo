@@ -32,7 +32,9 @@
       "Bash(node -e ' *)",
       "Bash(node -e \"console.log\\(require.resolve\\('lucide-react'\\)\\)\")",
       "Bash(curl -s -X POST http://127.0.0.1:8000/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"filter_icon_test@example.com\",\"password\":\"testpass123\",\"name\":\"Filter Test\"}')",
-      "Bash(node _pw_test_filter.cjs)"
+      "Bash(node _pw_test_filter.cjs)",
+      "Bash(python scripts/seed_listening.py)",
+      "Bash(./venv/Scripts/python.exe scripts/seed_listening.py)"
     ]
   }
 }
