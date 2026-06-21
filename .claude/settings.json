@@ -58,7 +58,8 @@
       "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" scripts/_tmp_check_cafe.py)",
       "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" scripts/_tmp_delete_cafe.py)",
       "Bash(cd ../frontend && npx tsc --noEmit 2>&1 | head -40)",
-      "Read(//c/Users/khine/**)"
+      "Read(//c/Users/khine/**)",
+      "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" scripts/_tmp_check_prod.py)"
     ]
   }
 }
