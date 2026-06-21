@@ -205,7 +205,14 @@ function ListeningPlayer({ audioId, onBack }: { audioId: number; onBack: () => v
               </span>
             </div>
             <p className="text-bark font-medium leading-relaxed">{detail.title}</p>
-            <audio controls src={detail.audio_url} className="w-full" />
+            <audio
+              controls
+              src={detail.audio_url}
+              className="w-full"
+              controlsList="nodownload nofullscreen noremoteplayback"
+              onContextMenu={e => e.preventDefault()}
+              {...{ disablePictureInPicture: true }}
+            />
           </div>
 
           {phase === 'error' && (
