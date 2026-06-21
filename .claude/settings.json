@@ -34,7 +34,26 @@
       "Bash(curl -s -X POST http://127.0.0.1:8000/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"filter_icon_test@example.com\",\"password\":\"testpass123\",\"name\":\"Filter Test\"}')",
       "Bash(node _pw_test_filter.cjs)",
       "Bash(python scripts/seed_listening.py)",
-      "Bash(./venv/Scripts/python.exe scripts/seed_listening.py)"
+      "Bash(./venv/Scripts/python.exe scripts/seed_listening.py)",
+      "Bash(railway --version)",
+      "Bash(railway whoami *)",
+      "Bash(command -v railway)",
+      "Bash(npx --yes @railway/cli --version)",
+      "Bash(npm list *)",
+      "Bash(npx --yes @railway/cli whoami)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://burmalingo-production.up.railway.app/api/listening/audios)",
+      "Bash(curl -s https://burmalingo-production.up.railway.app/api/listening/audios)",
+      "Bash(npx --yes @railway/cli status)",
+      "Bash(npx --yes @railway/cli list)",
+      "Bash(npx --yes @railway/cli link --help)",
+      "Bash(npx --yes @railway/cli link -p exquisite-nurturing)",
+      "Bash(npx --yes @railway/cli variables --service burmalingo --kv)",
+      "Bash(./venv/Scripts/python.exe -c ' *)",
+      "Bash(npx --yes @railway/cli run -- ./venv/Scripts/python.exe scripts/seed_listening.py)",
+      "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" scripts/seed_listening.py)",
+      "Bash(./venv/Scripts/python.exe -m alembic upgrade head)",
+      "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" -m alembic upgrade head)",
+      "Bash(./venv/Scripts/python.exe -m pytest tests/ -q)"
     ]
   }
 }

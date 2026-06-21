@@ -19,6 +19,7 @@ class ListeningLevelEnum(str, enum.Enum):
     pre_intermediate = "pre_intermediate"
     intermediate = "intermediate"
     upper_intermediate = "upper_intermediate"
+    ielts_preparation = "ielts_preparation"
 
 class RatingEnum(str, enum.Enum):
     hard = "hard"

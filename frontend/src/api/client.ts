@@ -156,7 +156,7 @@ export const speakingApi = {
 }
 
 // Listening
-export type ListeningLevel = 'beginner' | 'elementary' | 'pre_intermediate' | 'intermediate' | 'upper_intermediate'
+export type ListeningLevel = 'beginner' | 'elementary' | 'pre_intermediate' | 'intermediate' | 'upper_intermediate' | 'ielts_preparation'
 export type ListeningQuestionType = 'fill_blank' | 'true_false' | 'mcq'
 
 export interface ListeningAudioOut {
