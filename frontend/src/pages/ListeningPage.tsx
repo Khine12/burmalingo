@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Filter } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import {
   listeningApi,
@@ -353,7 +354,8 @@ export default function ListeningPage() {
           </p>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-0.5 -mx-6 px-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-0.5 -mx-6 px-6">
+          <Filter className="w-4 h-4 shrink-0 text-bark-light" aria-hidden="true" />
           <button
             onClick={() => setActiveLevel(null)}
             className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
