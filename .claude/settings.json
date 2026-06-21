@@ -1,7 +1,34 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -s -X POST http://localhost:8000/api/admin/upgrade -H 'Content-Type: application/json' -d '{\"email\":\"khinezarheinrubyaura@gmail.com\",\"admin_key\":\"burmalingo-admin-2026\"}')"
+      "Bash(curl -s -X POST http://localhost:8000/api/admin/upgrade -H 'Content-Type: application/json' -d '{\"email\":\"khinezarheinrubyaura@gmail.com\",\"admin_key\":\"burmalingo-admin-2026\"}')",
+      "Bash(cd /c/Users/khine/burmalingo/backend && find . -type f -name \"*.py\" | head -30)",
+      "Read(//c/c/Users/khine/burmalingo/**)",
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(venv/Scripts/python.exe -m alembic current)",
+      "Bash(venv/Scripts/python.exe -m alembic downgrade 0002)",
+      "Bash(venv/Scripts/python.exe -m uvicorn main:app --port 8765)",
+      "Bash(echo \"started with pid $!\")",
+      "Bash(curl -s http://127.0.0.1:8765/health)",
+      "Bash(cat /tmp/uvicorn_listening.log)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"listening_test@example.com\",\"password\":\"testpass123\",\"name\":\"Listening Test\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/auth/token -d \"username=listening_test@example.com&password=testpass123\")",
+      "Bash(curl -s http://127.0.0.1:8765/api/listening/audios?level=intermediate -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(curl -s http://127.0.0.1:8765/api/listening/audios?level=beginner -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}\\\\n' http://127.0.0.1:8765/api/listening/audios?level=bogus -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(curl -s http://127.0.0.1:8765/api/listening/audios/1 -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/listening/audios/1/attempt -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -H 'Content-Type: application/json' -d '{\"answers\": {\"1\": \"  Blueberry  \", \"2\": \"False\", \"3\": \"Medium\"}}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/listening/audios/1/attempt -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -H 'Content-Type: application/json' -d '{\"answers\": {\"1\": \"chocolate\", \"2\": \"False\", \"3\": \"small\"}}')",
+      "Bash(kill %1)",
+      "Bash(chromium-cli --help)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(npm ls *)",
+      "Bash(node _pw_test_listening.js)",
+      "Bash(node _pw_test_listening.cjs)",
+      "Bash(venv/Scripts/python.exe -c \"import main; print\\('app imports ok'\\)\")",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"grading_test@example.com\",\"password\":\"testpass123\",\"name\":\"Grading Test\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:8765/api/auth/token -d \"username=grading_test@example.com&password=testpass123\")"
     ]
   }
 }

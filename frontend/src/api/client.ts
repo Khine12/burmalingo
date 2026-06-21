@@ -155,4 +155,55 @@ export const speakingApi = {
   },
 }
 
+// Listening
+export type ListeningLevel = 'beginner' | 'elementary' | 'pre_intermediate' | 'intermediate' | 'upper_intermediate'
+export type ListeningQuestionType = 'fill_blank' | 'true_false' | 'mcq'
+
+export interface ListeningAudioOut {
+  id: number
+  title: string
+  level: ListeningLevel
+  created_at: string
+}
+
+export interface ListeningQuestionOut {
+  id: number
+  type: ListeningQuestionType
+  prompt: string
+  options: string[] | null
+  order: number
+}
+
+export interface ListeningAudioDetail {
+  id: number
+  title: string
+  level: ListeningLevel
+  transcript: string
+  audio_url: string
+  created_at: string
+  questions: ListeningQuestionOut[]
+}
+
+export interface ListeningAttemptResultItem {
+  question_id: number
+  is_correct: boolean
+  correct_answer: string
+}
+
+export interface ListeningAttemptResult {
+  score: number
+  results: ListeningAttemptResultItem[]
+}
+
+export const listeningApi = {
+  listAudios: (level?: ListeningLevel) =>
+    api.get<ListeningAudioOut[]>('/listening/audios', { params: level ? { level } : {} }),
+
+  getAudio: (id: number) =>
+    api.get<ListeningAudioDetail>(`/listening/audios/${id}`),
+
+  submitAttempt: (id: number, answers: Record<number, string>) =>
+    api.post<ListeningAttemptResult>(`/listening/audios/${id}/attempt`, { answers }),
+}
+
 export default api

@@ -21,9 +21,9 @@ const cards = [
   {
     icon: '🎧',
     title: 'IELTS Listening',
-    desc: 'Coming soon',
-    href: null,
-    available: false,
+    desc: 'Dialogues with fill-in, true/false & multiple choice',
+    href: '/ielts/listening',
+    available: true,
   },
 ]
 

@@ -6,7 +6,15 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(git pull *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(venv/Scripts/python.exe -c \"import requests; print\\('requests ok'\\)\")",
+      "Bash(venv/Scripts/python.exe scripts/_check_voices.py)",
+      "Bash(venv/Scripts/python.exe -c \"import azure.storage.blob; print\\(azure.storage.blob.__version__ if hasattr\\(azure.storage.blob,'__version__'\\) else 'installed, no version attr'\\)\")",
+      "Bash(venv/Scripts/python.exe -m pip install \"azure-storage-blob>=12.19.0\")",
+      "Bash(venv/Scripts/python.exe -m alembic upgrade head)",
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(venv/Scripts/python.exe -c \"from app.models.models import ListeningAudio, ListeningQuestion, ListeningAttempt; print\\('models import ok'\\)\")",
+      "Bash(venv/Scripts/python.exe scripts/seed_listening.py)"
     ]
   }
 }

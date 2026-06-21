@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     AZURE_SPEECH_KEY: str = ""
     AZURE_SPEECH_REGION: str = ""
 
+    AZURE_STORAGE_CONNECTION_STRING: str = ""
+    AZURE_STORAGE_CONTAINER: str = ""
+
     model_config = ConfigDict(env_file=".env")
 
 settings = Settings()

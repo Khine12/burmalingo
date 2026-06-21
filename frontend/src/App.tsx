@@ -18,6 +18,7 @@ import VocabularyPracticePage from './pages/VocabularyPracticePage'
 import GeneralWritingPage from './pages/GeneralWritingPage'
 import AdminPage from './pages/AdminPage'
 import SpeakingPage from './pages/SpeakingPage'
+import ListeningPage from './pages/ListeningPage'
 import VerifyEmailPage from './pages/VerifyEmailPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
@@ -58,6 +59,7 @@ function Router() {
   if (path === '/vocabulary/common-words')    return <VocabularyPracticePage category="common-words" />
   if (path === '/reading')      return <GeneralReadingPage />
   if (path === '/ielts/reading') return <ReadingPracticePage />
+  if (path === '/ielts/listening') return <ListeningPage />
   if (path === '/writing')         return <WritingPracticePage onBack={() => navigate('/')} />
   if (path === '/writing-general') return <GeneralWritingPage />
   if (path === '/speaking')        return <SpeakingPage />

@@ -19,3 +19,4 @@ resend>=0.7.0
 alembic>=1.13.0
 python-dateutil>=2.9.0
 azure-cognitiveservices-speech>=1.35.0
+azure-storage-blob>=12.19.0

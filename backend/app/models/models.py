@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Float, Boolean, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Text, Float, Boolean, DateTime, ForeignKey, Enum, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -7,6 +7,18 @@ import enum
 class TierEnum(str, enum.Enum):
     free = "free"
     pro = "pro"
+
+class ListeningQuestionTypeEnum(str, enum.Enum):
+    fill_blank = "fill_blank"
+    true_false = "true_false"
+    mcq = "mcq"
+
+class ListeningLevelEnum(str, enum.Enum):
+    beginner = "beginner"
+    elementary = "elementary"
+    pre_intermediate = "pre_intermediate"
+    intermediate = "intermediate"
+    upper_intermediate = "upper_intermediate"
 
 class RatingEnum(str, enum.Enum):
     hard = "hard"
@@ -36,6 +48,7 @@ class User(Base):
 
     reviews              = relationship("ReviewHistory", back_populates="user")
     speaking_assessments = relationship("SpeakingAssessment", back_populates="user")
+    listening_attempts   = relationship("ListeningAttempt", back_populates="user")
 
 class VocabCard(Base):
     __tablename__ = "vocab_cards"
@@ -88,3 +101,44 @@ class SpeakingAssessment(Base):
     overall_score       = Column(Float, nullable=True)
 
     user = relationship("User", back_populates="speaking_assessments")
+
+class ListeningAudio(Base):
+    __tablename__ = "listening_audios"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    title      = Column(String, nullable=False)
+    level      = Column(Enum(ListeningLevelEnum), nullable=False)
+    transcript = Column(Text, nullable=False)
+    audio_url  = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    questions = relationship("ListeningQuestion", back_populates="audio", order_by="ListeningQuestion.order")
+
+class ListeningQuestion(Base):
+    __tablename__ = "listening_questions"
+
+    id             = Column(Integer, primary_key=True, index=True)
+    audio_id       = Column(Integer, ForeignKey("listening_audios.id"), nullable=False, index=True)
+    type           = Column(Enum(ListeningQuestionTypeEnum), nullable=False)
+    prompt         = Column(Text, nullable=False)
+    options        = Column(JSON, nullable=True)
+    # Pipe-separated ('|') list of accepted answers, e.g. "blueberry|blueberries".
+    # fill_blank matches any variant after normalization; mcq/true_false store a
+    # single value with no pipe.
+    correct_answer = Column(String, nullable=False)
+    order          = Column(Integer, nullable=False)
+
+    audio = relationship("ListeningAudio", back_populates="questions")
+
+class ListeningAttempt(Base):
+    __tablename__ = "listening_attempts"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    audio_id   = Column(Integer, ForeignKey("listening_audios.id"), nullable=False, index=True)
+    answers    = Column(JSON, nullable=False)
+    score      = Column(Float, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user  = relationship("User", back_populates="listening_attempts")
+    audio = relationship("ListeningAudio")
