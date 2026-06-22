@@ -10,7 +10,7 @@ An English-learning web app built specifically for Burmese speakers — by a Bur
 
 In Myanmar, a single level of English class from a well-known teacher costs roughly half a month's basic salary — for a seat in a 100-person Zoom class where the teacher doesn't know your name. Cheaper video courses cover only one level with no structured progression. YouTube is free but completely unstructured. And even when a Burmese learner finds an English app, it wasn't built for them — the explanations assume you already think in English.
 
-BurmaLingo is the structured, affordable alternative — grammar explained *in Burmese*, a curriculum that builds level by level, and AI feedback on both writing and speaking.
+BurmaLingo is the structured, affordable alternative — grammar explained *in Burmese*, a curriculum that builds level by level, and AI feedback on reading, writing, speaking, and listening.
 
 ## The Founder's Path
 
@@ -30,6 +30,7 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Payments | Stripe + manual upgrade for Myanmar users |
 | AI Feedback | OpenAI GPT-4o |
 | Speech / Pronunciation | Azure AI Speech + ffmpeg (audio conversion) |
+| Listening Audio | Azure HD neural voices (TTS) + Azure Blob Storage |
 | Email | Resend |
 | CI/CD | GitHub Actions |
 
@@ -46,7 +47,9 @@ That full journey — knowing what worked at each stage and what was a waste of 
 
 ## What's Built
 
-**Speaking Practice** *(new)* — Record yourself responding to a prompt; the app converts your audio (WebM → 16 kHz WAV via ffmpeg) and runs Azure AI Speech unscripted pronunciation assessment, scoring **accuracy, fluency, completeness, and prosody** on your actual speech — combined with GPT-4o for grammar and topic feedback. ~60 prompts organized by level from Basic to IELTS. Pro: 25 sessions/month.
+**Listening Practice** *(new)* — Audio comprehension across two tracks: **General Listening** (Basic → Upper-Intermediate) and **IELTS Listening** (IELTS Preparation) — ~60 lessons in total. Each lesson pairs a natural dialogue or monologue with **15 questions** (fill-in-blank, True/False, and multiple choice) and instant grading. Audio is **pre-generated** with **Azure HD neural voices** — multiple speakers per conversation for realistic two- and three-person scenes — stored in **Azure Blob Storage** and streamed as static MP3 for instant playback. Playback speed scales by level, from a gentle pace for beginners up to full IELTS exam pace. The IELTS track covers all four listening section types: social enquiries, information monologues, academic tutorials, and lectures.
+
+**Speaking Practice** — Record yourself responding to a prompt; the app converts your audio (WebM → 16 kHz WAV via ffmpeg) and runs Azure AI Speech unscripted pronunciation assessment, scoring **accuracy, fluency, completeness, and prosody** on your actual speech — combined with GPT-4o for grammar and topic feedback. ~60 prompts organized by level from Basic to IELTS. Pro: 25 sessions/month.
 
 **Grammar Practice** — Multiple choice and fill-in-blank lessons across all levels, Basic through Upper-Intermediate. One question at a time with instant feedback and clear explanations in simple English.
 
@@ -78,6 +81,7 @@ That full journey — knowing what worked at each stage and what was a waste of 
 |---|---|---|
 | Writing — IELTS + General combined | 3 per 2 weeks | Unlimited |
 | Reading — IELTS + General combined | 3 per 2 weeks | Unlimited |
+| Listening — General + IELTS combined | 1 lesson per week | Unlimited |
 | Grammar | 1 lesson per week | Unlimited |
 | Vocabulary & Phrases | 1 lesson per week | Unlimited |
 | Speaking — AI pronunciation scoring | ❌ | 25 sessions/month |
@@ -117,6 +121,14 @@ npm run dev
 
 App: http://localhost:5173
 
+**Seeding listening audio** *(optional)*
+
+```bash
+cd backend
+# Generates audio via Azure TTS, uploads to Blob Storage, and seeds lessons + questions
+python scripts/seed_listening.py
+```
+
 **Tests**
 
 ```bash
@@ -134,6 +146,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES=10080
 OPENAI_API_KEY=
 AZURE_SPEECH_KEY=
 AZURE_SPEECH_REGION=
+AZURE_STORAGE_CONNECTION_STRING=
+AZURE_STORAGE_CONTAINER=listening-audio
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_ID=
@@ -152,18 +166,21 @@ burmalingo/
 │   │   ├── components/    # landing page components
 │   │   ├── context/       # AuthContext
 │   │   ├── data/          # grammar, vocabulary, reading, writing, speaking data
-│   │   ├── pages/         # route-level pages (incl. SpeakingPage)
+│   │   ├── pages/         # route-level pages (incl. SpeakingPage, ListeningPage)
 │   │   ├── types/         # TypeScript interfaces
 │   │   └── utils/         # XP system, limits, activity helpers
 │   └── ...
 │
 ├── backend/
 │   ├── app/
-│   │   ├── models/        # SQLAlchemy models
-│   │   ├── routers/       # auth, writing, general_writing, speaking, admin, feedback
-│   │   ├── services/      # WritingService, GeneralWritingService, AzureSpeechService, speaking quota, EmailService
+│   │   ├── models/        # SQLAlchemy models (incl. listening audio, questions, attempts)
+│   │   ├── routers/       # auth, writing, general_writing, speaking, listening, admin, feedback
+│   │   ├── services/      # WritingService, GeneralWritingService, AzureSpeechService,
+│   │   │                  #   ListeningAudioService (TTS + Blob upload),
+│   │   │                  #   ListeningGradingService, speaking quota, EmailService
 │   │   └── config.py
 │   ├── alembic/           # database migrations
+│   ├── scripts/           # seed_listening.py and other data scripts
 │   ├── tests/
 │   └── requirements.txt
 │
@@ -177,10 +194,11 @@ burmalingo/
 | Frontend | Vercel — auto-deploys from `main` |
 | Backend | Railway |
 | Database | Neon PostgreSQL |
+| Listening Audio | Azure Blob Storage |
 
 ## Status
 
-🚀 **Launched May 2026** · Speaking added June 2026
+🚀 **Launched May 2026** · Speaking added June 2026 · Listening added June 2026
 
 - ✅ Landing page
 - ✅ CI/CD pipeline
@@ -193,12 +211,12 @@ burmalingo/
 - ✅ IELTS Writing with GPT-4o band scoring
 - ✅ IELTS Reading
 - ✅ Vocabulary & Daily English
-- ✅ **Speaking Practice — Azure AI Speech pronunciation scoring (Basic → IELTS)**
+- ✅ Speaking Practice — Azure AI Speech pronunciation scoring (Basic → IELTS)
+- ✅ **Listening Practice — General + IELTS, Azure HD audio, all 6 levels**
 - ✅ XP system + streak tracking
 - ✅ Admin dashboard + manual Pro upgrade
 - ✅ Feedback collection system
 - ✅ Full curriculum — all 6 levels live (Basic → IELTS)
-- 🔄 Listening Practice
 
 ---
 
