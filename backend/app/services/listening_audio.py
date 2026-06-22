@@ -10,6 +10,7 @@ from app.config import settings
 HD_VOICES = {
     "A": "en-US-Aria:DragonHDLatestNeural",
     "B": "en-US-Andrew:DragonHDLatestNeural",
+    "C": "en-US-Emma:DragonHDLatestNeural",
 }
 
 # Speech rate per proficiency level — natural pace for lower levels,
