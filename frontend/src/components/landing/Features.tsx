@@ -4,7 +4,7 @@ const features = [
   { icon: '📖', label: 'General Reading', sub: 'Real-life stories' },
   { icon: '✍️', label: 'General Writing', sub: 'Practice writing by level with AI feedback' },
   { icon: '💬', label: 'Vocabulary', sub: 'Daily phrases & words' },
-  { icon: '🎧', label: 'Listening', sub: 'Coming soon' },
+  { icon: '🎧', label: 'Listening', sub: 'IELTS-style audio practice' },
   { icon: '🎯', label: 'Level Test', sub: 'Find your level' },
   { icon: '🗣️', label: 'Speaking', sub: 'AI pronunciation scoring' },
 ]

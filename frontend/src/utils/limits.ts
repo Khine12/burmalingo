@@ -81,5 +81,17 @@ export const LIMIT_MESSAGES = {
   reading: 'You have used your 3 free reading passages for this period. Upgrade to Pro for unlimited reading.',
   grammar: 'You have used your 1 free grammar lesson for this week. Upgrade to Pro for unlimited grammar practice.',
   vocab: 'You have used your 1 free vocabulary lesson for this week. Upgrade to Pro for unlimited vocabulary practice.',
+  listening: 'You have used your 1 free listening lesson for this week. Upgrade to Pro for unlimited listening practice.',
   levelTest: 'You have already taken the level test. Upgrade to Pro to retake it anytime.',
+}
+
+// The backend rejects over-limit requests with 429 and a
+// { error: 'quota_exceeded', used, limit, window_days } detail body (see
+// writing_quota.py / listening_quota.py). This is the source of truth —
+// client-side canUse()/recordUsage() above are only a same-tab UI nicety and
+// can drift (cleared storage, another device, stale period math), so every
+// page that hits a metered endpoint must check this on catch.
+export function isQuotaExceededError(err: unknown): boolean {
+  const e = err as { response?: { status?: number; data?: { detail?: { error?: string } } } }
+  return e?.response?.status === 429 && e?.response?.data?.detail?.error === 'quota_exceeded'
 }

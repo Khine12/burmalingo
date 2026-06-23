@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { writingApi } from '../api/client'
 import { awardXP } from './DashboardPage'
 import { useAuth } from '../context/AuthContext'
-import { canUse, recordUsage, getRemaining, LIMIT_MESSAGES } from '../utils/limits'
+import { canUse, recordUsage, getRemaining, isQuotaExceededError, LIMIT_MESSAGES } from '../utils/limits'
 
 interface Topic {
   id: number
@@ -187,8 +187,12 @@ export default function WritingPracticePage({ onBack }: { onBack: () => void }) 
         localStorage.setItem('burmalingo_highest_band', String(res.data.overall_band))
       }
       awardXP()
-    } catch {
-      setError('Something went wrong. Please try again.')
+    } catch (err) {
+      if (isQuotaExceededError(err)) {
+        setLimitBlocked(true)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
     } finally {
       submittingRef.current = false
       setIsGrading(false)

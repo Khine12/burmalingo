@@ -1,5 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models.models import User
+from app.routers.auth import get_current_user
+from app.services import writing_quota
 from app.services.general_writing_service import GeneralWritingService
 
 router = APIRouter()
@@ -84,11 +90,19 @@ def get_topics(level: str):
     return TOPICS[level]
 
 @router.post("/grade")
-def grade_essay(payload: GradeRequest):
+def grade_essay(
+    payload: GradeRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     word_count = len(payload.essay.split())
     if word_count < 30:
         raise HTTPException(status_code=422, detail="Please write at least 30 words.")
     valid_topics = [t["text"] for t in TOPICS.get(payload.level, [])]
     if payload.topic not in valid_topics:
         raise HTTPException(status_code=422, detail="Invalid topic")
-    return GeneralWritingService.grade_essay(payload.topic, payload.essay, payload.level)
+
+    writing_quota.check_quota(user, db)
+    result = GeneralWritingService.grade_essay(payload.topic, payload.essay, payload.level)
+    writing_quota.log_submission(user.id, db, kind="general")
+    return result

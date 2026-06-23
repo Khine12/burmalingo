@@ -26,6 +26,10 @@ class RatingEnum(str, enum.Enum):
     good = "good"
     easy = "easy"
 
+class WritingKindEnum(str, enum.Enum):
+    ielts = "ielts"
+    general = "general"
+
 class User(Base):
     __tablename__ = "users"
 
@@ -50,6 +54,7 @@ class User(Base):
     reviews              = relationship("ReviewHistory", back_populates="user")
     speaking_assessments = relationship("SpeakingAssessment", back_populates="user")
     listening_attempts   = relationship("ListeningAttempt", back_populates="user")
+    writing_submissions  = relationship("WritingSubmission", back_populates="user")
 
 class VocabCard(Base):
     __tablename__ = "vocab_cards"
@@ -143,3 +148,13 @@ class ListeningAttempt(Base):
 
     user  = relationship("User", back_populates="listening_attempts")
     audio = relationship("ListeningAudio")
+
+class WritingSubmission(Base):
+    __tablename__ = "writing_submissions"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    kind       = Column(Enum(WritingKindEnum), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+    user = relationship("User", back_populates="writing_submissions")

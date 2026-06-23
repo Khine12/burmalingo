@@ -11,7 +11,7 @@ const freeFeatures = [
   '10 vocabulary cards per week',
   '3 reading passages per 2 weeks',
   '3 translation exercises per week',
-  '3 writing submissions per 2 weeks',
+  '3 writing submissions per 2 weeks (full AI feedback)',
   '3 listening exercises per 2 weeks',
 ]
 

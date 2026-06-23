@@ -86,7 +86,7 @@ That full journey — knowing what worked at each stage and what was a waste of 
 | Vocabulary & Phrases | 1 lesson per week | Unlimited |
 | Speaking — AI pronunciation scoring | ❌ | 25 sessions/month |
 | Level Test | Once only | Retake anytime |
-| AI feedback & band scores | ❌ | ✅ |
+| AI feedback & band scores | 3 free submissions | Unlimited |
 
 **$7/month · 3-day free trial · Cancel anytime**
 

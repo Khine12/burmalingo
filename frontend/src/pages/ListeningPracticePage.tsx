@@ -10,6 +10,7 @@ import {
   type ListeningQuestionOut,
 } from '../api/client'
 import { awardXP } from './DashboardPage'
+import { isQuotaExceededError, LIMIT_MESSAGES } from '../utils/limits'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -131,7 +132,7 @@ function QuestionBlock({
 
 // ── Lesson player ────────────────────────────────────────────────────────────
 function ListeningPlayer({ audioId, onBack }: { audioId: number; onBack: () => void }) {
-  type Phase = 'loading' | 'ready' | 'submitting' | 'submitted' | 'error'
+  type Phase = 'loading' | 'ready' | 'submitting' | 'submitted' | 'limit' | 'error'
   const [phase, setPhase] = useState<Phase>('loading')
   const [detail, setDetail] = useState<ListeningAudioDetail | null>(null)
   const [answers, setAnswers] = useState<Record<number, string>>({})
@@ -156,9 +157,13 @@ function ListeningPlayer({ audioId, onBack }: { audioId: number; onBack: () => v
       setResult(res.data)
       awardXP()
       setPhase('submitted')
-    } catch {
-      setErrorMsg('Could not submit your answers. Please try again.')
-      setPhase('error')
+    } catch (err) {
+      if (isQuotaExceededError(err)) {
+        setPhase('limit')
+      } else {
+        setErrorMsg('Could not submit your answers. Please try again.')
+        setPhase('error')
+      }
     }
   }
 
@@ -224,6 +229,20 @@ function ListeningPlayer({ audioId, onBack }: { audioId: number; onBack: () => v
             </div>
           )}
 
+          {phase === 'limit' && (
+            <div className="bg-white rounded-2xl border border-bark/10 shadow-sm p-8 text-center space-y-3">
+              <p className="text-3xl">🔒</p>
+              <h2 className="font-serif text-lg font-bold text-bark">Free Limit Reached</h2>
+              <p className="text-bark-light text-sm leading-relaxed">{LIMIT_MESSAGES.listening}</p>
+              <a
+                href="/pricing"
+                className="block w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors"
+              >
+                Upgrade to Pro →
+              </a>
+            </div>
+          )}
+
           {phase === 'submitted' && result && (
             <div className="bg-white rounded-2xl border border-bark/10 shadow-sm p-6 text-center space-y-1">
               <p className="text-6xl font-bold font-serif" style={{ color: scoreColor(result.score) }}>
@@ -235,37 +254,41 @@ function ListeningPlayer({ audioId, onBack }: { audioId: number; onBack: () => v
             </div>
           )}
 
-          <div className="space-y-3">
-            {detail.questions.map((q, i) => (
-              <QuestionBlock
-                key={q.id}
-                question={q}
-                index={i}
-                value={answers[q.id] ?? ''}
-                onChange={val => setAnswer(q.id, val)}
-                result={resultByQuestion.get(q.id) ?? null}
-                disabled={phase === 'submitting' || phase === 'submitted'}
-              />
-            ))}
-          </div>
+          {phase !== 'limit' && (
+            <>
+              <div className="space-y-3">
+                {detail.questions.map((q, i) => (
+                  <QuestionBlock
+                    key={q.id}
+                    question={q}
+                    index={i}
+                    value={answers[q.id] ?? ''}
+                    onChange={val => setAnswer(q.id, val)}
+                    result={resultByQuestion.get(q.id) ?? null}
+                    disabled={phase === 'submitting' || phase === 'submitted'}
+                  />
+                ))}
+              </div>
 
-          {(phase === 'ready' || phase === 'submitting') && (
-            <button
-              onClick={submit}
-              disabled={phase === 'submitting'}
-              className="w-full bg-forest text-white text-sm font-bold px-4 py-3 rounded-xl hover:bg-forest/90 transition-colors disabled:opacity-60"
-            >
-              {phase === 'submitting' ? 'Submitting…' : 'Submit answers'}
-            </button>
-          )}
+              {(phase === 'ready' || phase === 'submitting') && (
+                <button
+                  onClick={submit}
+                  disabled={phase === 'submitting'}
+                  className="w-full bg-forest text-white text-sm font-bold px-4 py-3 rounded-xl hover:bg-forest/90 transition-colors disabled:opacity-60"
+                >
+                  {phase === 'submitting' ? 'Submitting…' : 'Submit answers'}
+                </button>
+              )}
 
-          {phase === 'submitted' && (
-            <button
-              onClick={tryAgain}
-              className="w-full border border-bark/15 text-bark text-sm font-semibold px-4 py-3 rounded-xl hover:bg-bark/4 transition-colors"
-            >
-              Try again
-            </button>
+              {phase === 'submitted' && (
+                <button
+                  onClick={tryAgain}
+                  className="w-full border border-bark/15 text-bark text-sm font-semibold px-4 py-3 rounded-xl hover:bg-bark/4 transition-colors"
+                >
+                  Try again
+                </button>
+              )}
+            </>
           )}
         </>
       )}

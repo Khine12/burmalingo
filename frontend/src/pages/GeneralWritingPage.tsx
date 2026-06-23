@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { generalWritingApi } from '../api/client'
 import { awardXP } from './DashboardPage'
 import { useAuth } from '../context/AuthContext'
-import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
+import { canUse, recordUsage, isQuotaExceededError, LIMIT_MESSAGES } from '../utils/limits'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
@@ -76,8 +76,12 @@ export default function GeneralWritingPage() {
       recordUsage('writing')
       awardXP()
       setPhase('result')
-    } catch {
-      setError('Something went wrong. Please try again.')
+    } catch (err) {
+      if (isQuotaExceededError(err)) {
+        setLimitBlocked(true)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

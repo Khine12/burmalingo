@@ -13,6 +13,7 @@ from app.schemas.listening import (
     ListeningAudioDetailOut,
     ListeningAudioOut,
 )
+from app.services import listening_quota
 from app.services.listening_grading import display_answer, grade_answer
 
 router = APIRouter()
@@ -49,6 +50,8 @@ def submit_attempt(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    listening_quota.check_quota(user, db)
+
     audio = db.query(ListeningAudio).filter(ListeningAudio.id == audio_id).first()
     if not audio:
         raise HTTPException(status_code=404, detail="Listening audio not found")
