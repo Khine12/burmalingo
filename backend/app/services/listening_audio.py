@@ -20,7 +20,7 @@ LEVEL_RATES = {
     "elementary": "0%",
     "pre_intermediate": "0%",
     "intermediate": "+10%",
-    "upper_intermediate": "+20%",
+    "upper_intermediate": "+10%",
 }
 
 _blob_service_client: BlobServiceClient | None = None
