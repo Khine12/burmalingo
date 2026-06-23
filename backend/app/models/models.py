@@ -30,6 +30,14 @@ class WritingKindEnum(str, enum.Enum):
     ielts = "ielts"
     general = "general"
 
+class ReadingKindEnum(str, enum.Enum):
+    ielts = "ielts"
+    general = "general"
+
+class VocabLessonCategoryEnum(str, enum.Enum):
+    daily_phrases = "daily-phrases"
+    common_words = "common-words"
+
 class User(Base):
     __tablename__ = "users"
 
@@ -50,11 +58,17 @@ class User(Base):
     reset_token         = Column(String, nullable=True)
     reset_token_expires = Column(DateTime(timezone=True), nullable=True)
     created_at          = Column(DateTime(timezone=True), server_default=func.now())
+    # Free users may take the level test once, ever; Pro can retake anytime.
+    # Null = never taken.
+    level_test_completed_at = Column(DateTime(timezone=True), nullable=True)
 
     reviews              = relationship("ReviewHistory", back_populates="user")
     speaking_assessments = relationship("SpeakingAssessment", back_populates="user")
     listening_attempts   = relationship("ListeningAttempt", back_populates="user")
     writing_submissions  = relationship("WritingSubmission", back_populates="user")
+    reading_submissions  = relationship("ReadingSubmission", back_populates="user")
+    grammar_submissions  = relationship("GrammarSubmission", back_populates="user")
+    vocab_lesson_submissions = relationship("VocabLessonSubmission", back_populates="user")
 
 class VocabCard(Base):
     __tablename__ = "vocab_cards"
@@ -158,3 +172,32 @@ class WritingSubmission(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
     user = relationship("User", back_populates="writing_submissions")
+
+class ReadingSubmission(Base):
+    __tablename__ = "reading_submissions"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    kind       = Column(Enum(ReadingKindEnum), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+    user = relationship("User", back_populates="reading_submissions")
+
+class GrammarSubmission(Base):
+    __tablename__ = "grammar_submissions"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+    user = relationship("User", back_populates="grammar_submissions")
+
+class VocabLessonSubmission(Base):
+    __tablename__ = "vocab_lesson_submissions"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    user_id    = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    category   = Column(Enum(VocabLessonCategoryEnum), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+    user = relationship("User", back_populates="vocab_lesson_submissions")

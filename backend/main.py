@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, vocab, translation, progress, payments, writing, general_writing, admin, feedback, speaking, listening
+from app.routers import auth, vocab, translation, progress, payments, writing, general_writing, admin, feedback, speaking, listening, reading, general_reading, grammar, vocab_lessons, level_test
 from app.database import engine, Base
 
 # Create all tables on startup
@@ -33,6 +33,11 @@ app.include_router(admin.router,           prefix="/api/admin",           tags=[
 app.include_router(feedback.router,        prefix="/api/feedback",        tags=["feedback"])
 app.include_router(speaking.router,        prefix="/api/speaking",        tags=["speaking"])
 app.include_router(listening.router,       prefix="/api/listening",       tags=["listening"])
+app.include_router(reading.router,         prefix="/api/reading",         tags=["reading"])
+app.include_router(general_reading.router, prefix="/api/general-reading", tags=["general-reading"])
+app.include_router(grammar.router,         prefix="/api/grammar",         tags=["grammar"])
+app.include_router(vocab_lessons.router,   prefix="/api/vocab-lessons",   tags=["vocab-lessons"])
+app.include_router(level_test.router,      prefix="/api/level-test",      tags=["level-test"])
 
 @app.get("/health")
 def health():
