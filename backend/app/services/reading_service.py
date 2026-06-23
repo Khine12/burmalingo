@@ -18,7 +18,11 @@ _PASSAGES = {
 
 
 def _sanitize_question(q: dict) -> dict:
-    return {k: v for k, v in q.items() if k not in ("answer", "alternatives")}
+    # explanation is stripped too — most explanations restate the correct
+    # answer outright (e.g. "The passage states X is TRUE"), so it can't be
+    # shipped before the user has answered. It's returned by grade_passage()
+    # instead, alongside the result, once grading has actually happened.
+    return {k: v for k, v in q.items() if k not in ("answer", "alternatives", "explanation")}
 
 
 def _find(kind: str, passage_id: int) -> dict | None:

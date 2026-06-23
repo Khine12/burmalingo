@@ -58,7 +58,7 @@ def grade(questions: list[dict], answers: dict[int, Any]) -> tuple[float, list[d
     """Grade a full set of answers keyed by question id.
 
     Returns (score_percent, results) where each result is
-    {question_id, is_correct, correct_answer}.
+    {question_id, is_correct, correct_answer, explanation}.
     """
     results = []
     correct_count = 0
@@ -71,6 +71,7 @@ def grade(questions: list[dict], answers: dict[int, Any]) -> tuple[float, list[d
             "question_id": q["id"],
             "is_correct": correct,
             "correct_answer": correct_label(q),
+            "explanation": q.get("explanation", ""),
         })
 
     score = round(correct_count / len(questions) * 100, 2) if questions else 0.0
