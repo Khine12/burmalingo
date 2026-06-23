@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { QUESTIONS, LEVEL_NAMES } from '../data/levelTestQuestions'
-import { useAuth } from '../context/AuthContext'
-import { canTakeLevelTest, recordLevelTestDone, LIMIT_MESSAGES } from '../utils/limits'
+import { LIMIT_MESSAGES } from '../utils/limits'
+import { levelTestApi } from '../api/client'
 
 type Phase = 'intro' | 'quiz' | 'result'
 
@@ -34,8 +34,13 @@ export default function LevelTestPage() {
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(shuffledQuestions.length).fill(null))
   const [selected, setSelected] = useState<number | null>(null)
   const [result, setResult]   = useState<{ scores: Record<number, LevelScore>; recommended: number } | null>(null)
-  const { user } = useAuth()
-  const isPro = user?.tier === 'pro'
+  const [eligibility, setEligibility] = useState<'loading' | 'allowed' | 'blocked'>('loading')
+
+  useEffect(() => {
+    levelTestApi.getEligibility()
+      .then(res => setEligibility(res.data.can_take ? 'allowed' : 'blocked'))
+      .catch(() => setEligibility('allowed')) // fail open on the client check — the server still enforces on /complete
+  }, [])
 
   const q        = shuffledQuestions[currentQ]
   const progress = ((currentQ + (selected !== null ? 1 : 0)) / shuffledQuestions.length) * 100
@@ -74,7 +79,13 @@ export default function LevelTestPage() {
     setResult(null)
   }
 
-  if (!canTakeLevelTest(isPro)) return (
+  if (eligibility === 'loading') return (
+    <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full border-4 border-forest/20 border-t-forest animate-spin" />
+    </div>
+  )
+
+  if (eligibility === 'blocked') return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-6">
       <div className="bg-white rounded-2xl shadow-sm border border-bark/10 p-10 max-w-md w-full text-center space-y-4">
         <p className="text-4xl">🔒</p>
@@ -265,7 +276,13 @@ export default function LevelTestPage() {
           {/* Actions */}
           <div className="flex flex-col gap-3">
             <button
-              onClick={() => { recordLevelTestDone(); window.location.href = '/dashboard' }}
+              onClick={async () => {
+                // Best-effort — the result screen is already showing; the
+                // gate that matters is enforced server-side on the *next*
+                // attempt, so a failure here shouldn't block navigation now.
+                try { await levelTestApi.complete() } catch { /* ignore */ }
+                window.location.href = '/dashboard'
+              }}
               className="w-full py-3.5 bg-forest text-white font-bold text-sm rounded-xl tracking-wide text-center hover:bg-forest-mid transition-colors shadow-sm shadow-forest/20"
             >
               Go to Dashboard

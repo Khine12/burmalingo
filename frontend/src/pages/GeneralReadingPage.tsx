@@ -1,17 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { awardXP } from './DashboardPage'
 import { useAuth } from '../context/AuthContext'
-import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
+import { canUse, recordUsage, isQuotaExceededError, LIMIT_MESSAGES } from '../utils/limits'
 import {
-  generalReadingPassages,
-  type GRPassage,
-  type GRQuestion,
-  type GRDifficulty,
-} from '../data/generalReadingPassages'
+  generalReadingApi,
+  type QuizResultItem,
+  type ReadingPassageDetail,
+  type ReadingPassageListItem,
+  type ReadingQuestionOut,
+} from '../api/client'
 
-type Phase = 'list' | 'reading' | 'results'
+type Phase = 'list' | 'loading' | 'reading' | 'submitting' | 'results' | 'error'
+type GRDifficulty = 'basic' | 'elementary' | 'pre-intermediate' | 'intermediate' | 'upper-intermediate'
 
-function difficultyStyle(d: GRDifficulty) {
+function difficultyStyle(d: string) {
   if (d === 'basic') return 'bg-forest-pale text-forest'
   if (d === 'elementary') return 'bg-gold-pale text-gold'
   if (d === 'pre-intermediate') return 'bg-red-50 text-red-600'
@@ -19,7 +21,7 @@ function difficultyStyle(d: GRDifficulty) {
   return 'bg-purple-50 text-purple-600'
 }
 
-function difficultyLabel(d: GRDifficulty) {
+function difficultyLabel(d: string) {
   if (d === 'basic') return 'Basic'
   if (d === 'elementary') return 'Elementary'
   if (d === 'pre-intermediate') return 'Pre-Intermediate'
@@ -27,25 +29,7 @@ function difficultyLabel(d: GRDifficulty) {
   return 'Upper-Intermediate'
 }
 
-function isAnswerCorrect(q: GRQuestion, ans: string | number | undefined): boolean {
-  if (ans === undefined) return false
-  if (q.type === 'tfng') return typeof ans === 'string' && ans === q.answer
-  if (q.type === 'multiple' || q.type === 'vocab') return typeof ans === 'number' && ans === q.answer
-  if (q.type === 'fillin') {
-    if (typeof ans !== 'string' || ans.trim() === '') return false
-    return ans.trim().toLowerCase() === (q.answer as string).toLowerCase()
-  }
-  return false
-}
-
-function correctLabel(q: GRQuestion): string {
-  if (q.type === 'tfng') return q.answer as string
-  if (q.type === 'multiple' || q.type === 'vocab') return q.options![q.answer as number]
-  if (q.type === 'fillin') return q.answer as string
-  return ''
-}
-
-function questionTypeLabel(type: GRQuestion['type']) {
+function questionTypeLabel(type: ReadingQuestionOut['type']) {
   if (type === 'tfng')     return 'True / False / Not Given'
   if (type === 'multiple') return 'Multiple Choice'
   if (type === 'fillin')   return 'Fill in the Blank'
@@ -54,37 +38,65 @@ function questionTypeLabel(type: GRQuestion['type']) {
 
 export default function GeneralReadingPage() {
   const [phase, setPhase]       = useState<Phase>('list')
-  const [passage, setPassage]   = useState<GRPassage | null>(null)
+  const [passages, setPassages] = useState<ReadingPassageListItem[]>([])
+  const [passage, setPassage]   = useState<ReadingPassageDetail | null>(null)
   const [answers, setAnswers]   = useState<Record<number, string | number>>({})
+  const [results, setResults]   = useState<QuizResultItem[] | null>(null)
   const [score, setScore]       = useState(0)
+  const [errorMsg, setErrorMsg] = useState('')
   const [filterLevel, setFilterLevel] = useState<GRDifficulty | 'all'>('all')
   const { user } = useAuth()
   const [limitBlocked, setLimitBlocked] = useState(false)
   const isPro = user?.tier === 'pro'
 
-  const filtered = filterLevel === 'all'
-    ? generalReadingPassages
-    : generalReadingPassages.filter(p => p.level === filterLevel)
+  useEffect(() => {
+    generalReadingApi.listPassages()
+      .then(res => setPassages(res.data))
+      .catch(() => setErrorMsg('Could not load passages. Please try again.'))
+  }, [])
 
-  function startPassage(p: GRPassage) {
+  const filtered = filterLevel === 'all'
+    ? passages
+    : passages.filter(p => p.level === filterLevel)
+
+  async function startPassage(p: ReadingPassageListItem) {
     if (!canUse('reading', isPro)) { setLimitBlocked(true); return }
-    setPassage(p)
-    setAnswers({})
-    setScore(0)
-    setPhase('reading')
+    setPhase('loading')
+    try {
+      const res = await generalReadingApi.getPassage(p.id)
+      setPassage(res.data)
+      setAnswers({})
+      setResults(null)
+      setScore(0)
+      setPhase('reading')
+    } catch {
+      setErrorMsg('Could not load this passage. Please try again.')
+      setPhase('error')
+    }
   }
 
   function setAnswer(qId: number, value: string | number) {
     setAnswers(prev => ({ ...prev, [qId]: value }))
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!passage) return
-    const correct = passage.questions.filter(q => isAnswerCorrect(q, answers[q.id])).length
-    setScore(correct)
-    setPhase('results')
-    awardXP()
-    recordUsage('reading')
+    setPhase('submitting')
+    try {
+      const res = await generalReadingApi.checkPassage(passage.id, answers)
+      setResults(res.data.results)
+      setScore(res.data.results.filter(r => r.is_correct).length)
+      setPhase('results')
+      awardXP()
+      recordUsage('reading')
+    } catch (err) {
+      if (isQuotaExceededError(err)) {
+        setLimitBlocked(true)
+      } else {
+        setErrorMsg('Could not submit your answers. Please try again.')
+        setPhase('error')
+      }
+    }
   }
 
   const allAnswered = passage
@@ -102,6 +114,8 @@ export default function GeneralReadingPage() {
         return ans !== undefined
       }).length
     : 0
+
+  const resultByQuestion = new Map((results ?? []).map(r => [r.question_id, r]))
 
   if (limitBlocked) return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-6">
@@ -141,7 +155,7 @@ export default function GeneralReadingPage() {
             </button>
           )}
           <span className="font-serif font-bold text-bark">General Reading</span>
-          {phase === 'reading' && passage ? (
+          {(phase === 'reading' || phase === 'submitting') && passage ? (
             <span className="text-xs font-semibold text-bark-light tabular-nums">
               {answeredCount}/{passage.questions.length} answered
             </span>
@@ -160,6 +174,12 @@ export default function GeneralReadingPage() {
               Real-life stories and everyday topics · Multiple choice, T/F/NG, fill-in & vocabulary
             </p>
           </div>
+
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+              <p className="text-sm text-red-600">{errorMsg}</p>
+            </div>
+          )}
 
           {/* Level filter */}
           <div className="flex gap-2 flex-wrap">
@@ -190,14 +210,15 @@ export default function GeneralReadingPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-semibold text-bark-light uppercase tracking-wider">{p.topic}</span>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${difficultyStyle(p.level)}`}>
-                      {difficultyLabel(p.level)}
-                    </span>
+                    {p.level && (
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${difficultyStyle(p.level)}`}>
+                        {difficultyLabel(p.level)}
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-serif text-base font-bold text-bark group-hover:text-forest transition-colors leading-snug mb-2">
                     {p.title}
                   </h3>
-                  <p className="text-xs text-bark-light">{p.questions.length} questions</p>
                 </button>
               ))}
             </div>
@@ -205,8 +226,27 @@ export default function GeneralReadingPage() {
         </main>
       )}
 
+      {/* Loading */}
+      {phase === 'loading' && (
+        <div className="flex items-center justify-center py-24">
+          <div className="w-10 h-10 rounded-full border-4 border-forest/20 border-t-forest animate-spin" />
+        </div>
+      )}
+
+      {/* Error */}
+      {phase === 'error' && (
+        <main className="max-w-3xl mx-auto px-6 py-10">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5 text-center space-y-3">
+            <p className="text-sm text-red-600">{errorMsg}</p>
+            <button onClick={() => setPhase('list')} className="text-sm font-semibold text-red-700 underline">
+              Back to passages
+            </button>
+          </div>
+        </main>
+      )}
+
       {/* Reading + questions */}
-      {phase === 'reading' && passage && (
+      {(phase === 'reading' || phase === 'submitting') && passage && (
         <main className="max-w-5xl mx-auto px-6 py-8 space-y-8 lg:grid lg:grid-cols-[1fr_420px] lg:gap-8 lg:space-y-0 lg:items-start">
 
           {/* Passage text */}
@@ -216,10 +256,14 @@ export default function GeneralReadingPage() {
                 <h2 className="font-serif text-lg font-bold text-bark">{passage.title}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-bark-light">{passage.topic}</span>
-                  <span className="text-bark/20">·</span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyStyle(passage.level)}`}>
-                    {difficultyLabel(passage.level)}
-                  </span>
+                  {passage.level && (
+                    <>
+                      <span className="text-bark/20">·</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${difficultyStyle(passage.level)}`}>
+                        {difficultyLabel(passage.level)}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="px-6 py-5 text-[14px] text-bark leading-[1.9] space-y-4 max-h-[60vh] overflow-y-auto">
@@ -245,11 +289,11 @@ export default function GeneralReadingPage() {
 
             <button
               onClick={handleSubmit}
-              disabled={!allAnswered}
+              disabled={!allAnswered || phase === 'submitting'}
               className="w-full py-4 bg-forest text-white font-bold text-sm rounded-xl tracking-wide hover:bg-forest-mid transition-colors shadow-sm shadow-forest/20
                 disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none"
             >
-              {allAnswered ? 'Submit Answers →' : `Answer all ${passage.questions.length} questions to submit`}
+              {phase === 'submitting' ? 'Submitting…' : allAnswered ? 'Submit Answers →' : `Answer all ${passage.questions.length} questions to submit`}
             </button>
           </div>
         </main>
@@ -283,11 +327,12 @@ export default function GeneralReadingPage() {
 
           <div className="space-y-4">
             {passage.questions.map((q, i) => {
-              const correct = isAnswerCorrect(q, answers[q.id])
+              const result = resultByQuestion.get(q.id)
+              const correct = result?.is_correct ?? false
               const ans = answers[q.id]
               let userLabel = 'No answer'
               if (q.type === 'tfng' && typeof ans === 'string') userLabel = ans
-              else if ((q.type === 'multiple' || q.type === 'vocab') && typeof ans === 'number') userLabel = q.options![ans]
+              else if ((q.type === 'multiple' || q.type === 'vocab') && typeof ans === 'number' && q.options) userLabel = q.options[ans]
               else if (q.type === 'fillin' && typeof ans === 'string') userLabel = ans || 'No answer'
 
               return (
@@ -308,9 +353,9 @@ export default function GeneralReadingPage() {
                       <p className="text-red-700"><span className="font-semibold">Your answer: </span>{userLabel}</p>
                     )}
                     <p className={correct ? 'text-forest' : 'text-bark-mid'}>
-                      <span className="font-semibold">Correct: </span>{correctLabel(q)}
+                      <span className="font-semibold">Correct: </span>{result?.correct_answer}
                     </p>
-                    <p className="text-bark-light leading-relaxed pt-1">{q.explanation}</p>
+                    <p className="text-bark-light leading-relaxed pt-1">{result?.explanation}</p>
                   </div>
                 </div>
               )
@@ -340,7 +385,7 @@ export default function GeneralReadingPage() {
 function QuestionCard({
   q, index, selected, onAnswer,
 }: {
-  q: GRQuestion
+  q: ReadingQuestionOut
   index: number
   selected: string | number | undefined
   onAnswer: (val: string | number) => void

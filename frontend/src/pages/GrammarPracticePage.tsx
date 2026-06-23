@@ -1,17 +1,25 @@
-import { useState } from 'react'
-import { grammarLessons, type GrammarLesson, type GrammarQuestion, type GrammarLevel } from '../data/grammarLessons'
+import { useEffect, useState } from 'react'
 import { awardXP } from './DashboardPage'
 import { useAuth } from '../context/AuthContext'
-import { canUse, recordUsage, LIMIT_MESSAGES } from '../utils/limits'
+import { canUse, recordUsage, isQuotaExceededError, LIMIT_MESSAGES } from '../utils/limits'
+import {
+  grammarApi,
+  type AnswerCheckResult,
+  type GrammarLessonDetail,
+  type GrammarLessonListItem,
+  type QuizQuestionOut,
+  type QuizResultItem,
+} from '../api/client'
 
 function navigate(to: string) {
   window.history.pushState({}, '', to)
   window.dispatchEvent(new PopStateEvent('popstate'))
 }
 
-type Phase = 'list' | 'quiz' | 'results'
+type Phase = 'list' | 'loading' | 'quiz' | 'submitting' | 'results' | 'error'
+type GrammarLevel = 'basic' | 'elementary' | 'pre-intermediate' | 'intermediate' | 'upper-intermediate'
 
-function levelStyle(level: GrammarLevel) {
+function levelStyle(level: string) {
   if (level === 'basic') return 'bg-forest-pale text-forest'
   if (level === 'elementary') return 'bg-gold-pale text-gold'
   if (level === 'pre-intermediate') return 'bg-red-50 text-red-600'
@@ -20,62 +28,92 @@ function levelStyle(level: GrammarLevel) {
   return 'bg-bark/10 text-bark'
 }
 
-function isCorrect(q: GrammarQuestion, ans: string | number | undefined): boolean {
-  if (ans === undefined) return false
-  if (q.type === 'multiple') return ans === q.answer
-  if (q.type === 'fillin') {
-    if (typeof ans !== 'string') return false
-    return ans.trim().toLowerCase() === (q.answer as string).toLowerCase()
-  }
-  return false
-}
-
 export default function GrammarPracticePage() {
   const [phase, setPhase] = useState<Phase>('list')
-  const [lesson, setLesson] = useState<GrammarLesson | null>(null)
+  const [lessons, setLessons] = useState<GrammarLessonListItem[]>([])
+  const [lesson, setLesson] = useState<GrammarLessonDetail | null>(null)
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<Record<number, string | number>>({})
-  const [showFeedback, setShowFeedback] = useState(false)
+  const [feedback, setFeedback] = useState<AnswerCheckResult | null>(null)
+  const [results, setResults] = useState<QuizResultItem[] | null>(null)
+  const [score, setScore] = useState(0)
+  const [errorMsg, setErrorMsg] = useState('')
   const [filterLevel, setFilterLevel] = useState<GrammarLevel | 'all'>('all')
 
   const { user } = useAuth()
   const [limitBlocked, setLimitBlocked] = useState(false)
   const isPro = user?.tier === 'pro'
 
+  useEffect(() => {
+    grammarApi.listLessons()
+      .then(res => setLessons(res.data))
+      .catch(() => setErrorMsg('Could not load lessons. Please try again.'))
+  }, [])
+
   const filtered = filterLevel === 'all'
-    ? grammarLessons
-    : grammarLessons.filter(l => l.level === filterLevel)
+    ? lessons
+    : lessons.filter(l => l.level === filterLevel)
 
-  function startLesson(l: GrammarLesson) {
+  async function startLesson(l: GrammarLessonListItem) {
     if (!canUse('grammar', isPro)) { setLimitBlocked(true); return }
-    setLesson(l)
-    setCurrent(0)
-    setAnswers({})
-    setShowFeedback(false)
-    setPhase('quiz')
-  }
-
-  function handleAnswer(val: string | number) {
-    if (!lesson || showFeedback) return
-    setAnswers(prev => ({ ...prev, [lesson.questions[current].id]: val }))
-    setShowFeedback(true)
-  }
-
-  function handleNext() {
-    if (!lesson) return
-    if (current + 1 < lesson.questions.length) {
-      setCurrent(c => c + 1)
-      setShowFeedback(false)
-    } else {
-      setPhase('results')
-      awardXP()
-      recordUsage('grammar')
+    setPhase('loading')
+    try {
+      const res = await grammarApi.getLesson(l.id)
+      setLesson(res.data)
+      setCurrent(0)
+      setAnswers({})
+      setFeedback(null)
+      setResults(null)
+      setPhase('quiz')
+    } catch {
+      setErrorMsg('Could not load this lesson. Please try again.')
+      setPhase('error')
     }
   }
 
-  const score = lesson
-    ? lesson.questions.filter(q => isCorrect(q, answers[q.id])).length
-    : 0
+  async function handleAnswer(val: string | number) {
+    if (!lesson || feedback) return
+    const q = lesson.questions[current]
+    setAnswers(prev => ({ ...prev, [q.id]: val }))
+    try {
+      const res = await grammarApi.answerQuestion(lesson.id, q.id, val)
+      setFeedback(res.data)
+    } catch (err) {
+      if (isQuotaExceededError(err)) {
+        setLimitBlocked(true)
+      } else {
+        setErrorMsg('Could not check your answer. Please try again.')
+        setPhase('error')
+      }
+    }
+  }
+
+  async function handleNext() {
+    if (!lesson) return
+    if (current + 1 < lesson.questions.length) {
+      setCurrent(c => c + 1)
+      setFeedback(null)
+    } else {
+      setPhase('submitting')
+      try {
+        const res = await grammarApi.checkLesson(lesson.id, answers)
+        setResults(res.data.results)
+        setScore(res.data.results.filter(r => r.is_correct).length)
+        setPhase('results')
+        awardXP()
+        recordUsage('grammar')
+      } catch (err) {
+        if (isQuotaExceededError(err)) {
+          setLimitBlocked(true)
+        } else {
+          setErrorMsg('Could not submit your answers. Please try again.')
+          setPhase('error')
+        }
+      }
+    }
+  }
+
+  const resultByQuestion = new Map((results ?? []).map(r => [r.question_id, r]))
 
   if (limitBlocked) return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-6">
@@ -108,7 +146,7 @@ export default function GrammarPracticePage() {
             {phase === 'list' ? 'Dashboard' : 'All Lessons'}
           </button>
           <span className="font-serif font-bold text-bark">Grammar Practice</span>
-          {phase === 'quiz' && lesson ? (
+          {(phase === 'quiz' || phase === 'submitting') && lesson ? (
             <span className="text-xs font-semibold text-bark-light tabular-nums">
               {current + 1}/{lesson.questions.length}
             </span>
@@ -123,6 +161,12 @@ export default function GrammarPracticePage() {
             <h1 className="font-serif text-3xl font-bold text-bark">Grammar Practice</h1>
             <p className="text-bark-light text-sm mt-1">One question at a time · Instant feedback · Simple English</p>
           </div>
+
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+              <p className="text-sm text-red-600">{errorMsg}</p>
+            </div>
+          )}
 
           {/* Level filter */}
           <div className="flex gap-2 flex-wrap">
@@ -157,15 +201,34 @@ export default function GrammarPracticePage() {
                 <h3 className="font-serif text-base font-bold text-bark group-hover:text-forest transition-colors leading-snug mb-2">
                   {l.title}
                 </h3>
-                <p className="text-xs text-bark-light">{l.questions.length} questions</p>
+                <p className="text-xs text-bark-light">{l.question_count} questions</p>
               </button>
             ))}
           </div>
         </main>
       )}
 
+      {/* Loading */}
+      {phase === 'loading' && (
+        <div className="flex items-center justify-center py-24">
+          <div className="w-10 h-10 rounded-full border-4 border-forest/20 border-t-forest animate-spin" />
+        </div>
+      )}
+
+      {/* Error */}
+      {phase === 'error' && (
+        <main className="max-w-xl mx-auto px-6 py-10">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5 text-center space-y-3">
+            <p className="text-sm text-red-600">{errorMsg}</p>
+            <button onClick={() => setPhase('list')} className="text-sm font-semibold text-red-700 underline">
+              Back to lessons
+            </button>
+          </div>
+        </main>
+      )}
+
       {/* Quiz */}
-      {phase === 'quiz' && lesson && (
+      {(phase === 'quiz' || phase === 'submitting') && lesson && (
         <main className="max-w-xl mx-auto px-6 py-10">
           {/* Progress bar */}
           <div className="w-full bg-bark/10 rounded-full h-1.5 mb-8">
@@ -179,11 +242,11 @@ export default function GrammarPracticePage() {
             q={lesson.questions[current]}
             index={current}
             selected={answers[lesson.questions[current].id]}
-            showFeedback={showFeedback}
+            feedback={feedback}
             onAnswer={handleAnswer}
             onNext={handleNext}
             isLast={current + 1 === lesson.questions.length}
-            isCorrect={isCorrect(lesson.questions[current], answers[lesson.questions[current].id])}
+            submitting={phase === 'submitting'}
           />
         </main>
       )}
@@ -216,14 +279,12 @@ export default function GrammarPracticePage() {
           {/* Review */}
           <div className="space-y-4">
             {lesson.questions.map((q, i) => {
-              const correct = isCorrect(q, answers[q.id])
+              const result = resultByQuestion.get(q.id)
+              const correct = result?.is_correct ?? false
               const ans = answers[q.id]
               const userLabel = q.type === 'multiple'
-                ? (typeof ans === 'number' ? q.options![ans] : 'No answer')
+                ? (typeof ans === 'number' && q.options ? q.options[ans] : 'No answer')
                 : (typeof ans === 'string' ? ans || 'No answer' : 'No answer')
-              const correctLabel = q.type === 'multiple'
-                ? q.options![q.answer as number]
-                : q.answer as string
 
               return (
                 <div key={q.id} className={`rounded-2xl border px-5 py-4 space-y-2 ${correct ? 'bg-forest-pale border-forest/20' : 'bg-red-50 border-red-200'}`}>
@@ -236,9 +297,9 @@ export default function GrammarPracticePage() {
                   <div className="ml-6 space-y-1 text-xs">
                     {!correct && <p className="text-red-700"><span className="font-semibold">Your answer: </span>{userLabel}</p>}
                     <p className={correct ? 'text-forest' : 'text-bark-mid'}>
-                      <span className="font-semibold">Correct: </span>{correctLabel}
+                      <span className="font-semibold">Correct: </span>{result?.correct_answer}
                     </p>
-                    <p className="text-bark-light leading-relaxed pt-1">{q.explanation}</p>
+                    <p className="text-bark-light leading-relaxed pt-1">{result?.explanation}</p>
                   </div>
                 </div>
               )
@@ -266,18 +327,19 @@ export default function GrammarPracticePage() {
 }
 
 function QuizCard({
-  q, index, selected, showFeedback, onAnswer, onNext, isLast, isCorrect,
+  q, index, selected, feedback, onAnswer, onNext, isLast, submitting,
 }: {
-  q: GrammarQuestion
+  q: QuizQuestionOut
   index: number
   selected: string | number | undefined
-  showFeedback: boolean
+  feedback: AnswerCheckResult | null
   onAnswer: (val: string | number) => void
   onNext: () => void
   isLast: boolean
-  isCorrect: boolean
+  submitting: boolean
 }) {
   const [fillVal, setFillVal] = useState('')
+  const showFeedback = feedback !== null
 
   return (
     <div className="bg-white rounded-2xl border border-bark/10 shadow-sm px-6 py-6 space-y-5">
@@ -294,7 +356,7 @@ function QuizCard({
           {q.options.map((opt, j) => {
             let style = 'bg-white border-bark/20 text-bark hover:border-forest/30 hover:bg-forest-pale/50'
             if (showFeedback) {
-              if (j === q.answer) style = 'bg-forest-pale border-forest text-forest font-semibold'
+              if (opt === feedback?.correct_answer) style = 'bg-forest-pale border-forest text-forest font-semibold'
               else if (selected === j) style = 'bg-red-50 border-red-400 text-red-700'
               else style = 'bg-white border-bark/10 text-bark/40'
             } else if (selected === j) {
@@ -339,12 +401,12 @@ function QuizCard({
       )}
 
       {/* Feedback */}
-      {showFeedback && (
-        <div className={`rounded-xl px-4 py-3 text-sm space-y-1 ${isCorrect ? 'bg-forest-pale border border-forest/20' : 'bg-red-50 border border-red-200'}`}>
-          <p className={`font-bold ${isCorrect ? 'text-forest' : 'text-red-700'}`}>
-            {isCorrect ? '✓ Correct!' : '✗ Not quite'}
+      {showFeedback && feedback && (
+        <div className={`rounded-xl px-4 py-3 text-sm space-y-1 ${feedback.is_correct ? 'bg-forest-pale border border-forest/20' : 'bg-red-50 border border-red-200'}`}>
+          <p className={`font-bold ${feedback.is_correct ? 'text-forest' : 'text-red-700'}`}>
+            {feedback.is_correct ? '✓ Correct!' : '✗ Not quite'}
           </p>
-          <p className="text-bark-light leading-relaxed">{q.explanation}</p>
+          <p className="text-bark-light leading-relaxed">{feedback.explanation}</p>
         </div>
       )}
 
@@ -352,9 +414,10 @@ function QuizCard({
       {showFeedback && (
         <button
           onClick={onNext}
-          className="w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors"
+          disabled={submitting}
+          className="w-full py-3 bg-forest text-white font-bold text-sm rounded-xl hover:bg-forest-mid transition-colors disabled:opacity-60"
         >
-          {isLast ? 'See Results →' : 'Next Question →'}
+          {submitting ? 'Submitting…' : isLast ? 'See Results →' : 'Next Question →'}
         </button>
       )}
     </div>
