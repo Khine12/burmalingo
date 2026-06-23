@@ -21,6 +21,7 @@ LEVEL_RATES = {
     "pre_intermediate": "0%",
     "intermediate": "+10%",
     "upper_intermediate": "+10%",
+    "ielts_preparation": "+10%",
 }
 
 _blob_service_client: BlobServiceClient | None = None

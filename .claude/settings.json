@@ -60,7 +60,8 @@
       "Bash(cd ../frontend && npx tsc --noEmit 2>&1 | head -40)",
       "Read(//c/Users/khine/**)",
       "Bash(npx --yes @railway/cli run -- \"C:/Users/khine/burmalingo/backend/venv/Scripts/python.exe\" scripts/_tmp_check_prod.py)",
-      "Bash(railway status *)"
+      "Bash(railway status *)",
+      "Bash(railway run *)"
     ]
   }
 }
