@@ -7,17 +7,17 @@ import Features from '../components/landing/Features'
 import Pricing from '../components/landing/Pricing'
 import { CTABanner, Footer } from '../components/landing/CTAFooter'
 
-export default function Landing({onDemo}:{onDemo:()=>void}) {
+export default function Landing() {
   return (
     <div className="min-h-screen bg-cream text-bark font-sans">
-      <Navbar onDemo={onDemo}/>
-      <Hero onDemo={onDemo}/>
+      <Navbar/>
+      <Hero/>
       <HowItWorks/>
       <FounderStory/>
       <LevelGrid/>
       <Features/>
-      <CTABanner onDemo={onDemo}/>
-      <Pricing onDemo={onDemo}/>
+      <CTABanner/>
+      <Pricing/>
       <Footer/>
     </div>
   )

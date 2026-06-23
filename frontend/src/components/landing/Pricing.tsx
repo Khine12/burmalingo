@@ -17,7 +17,7 @@ const pro = [
   'AI Speaking practice with pronunciation scoring (25 sessions/month)',
   'All future content included',
 ]
-export default function Pricing({onDemo}:{onDemo:()=>void}) {
+export default function Pricing() {
   return (
     <section className="py-20 px-7">
       <div className="max-w-3xl mx-auto">
@@ -30,19 +30,19 @@ export default function Pricing({onDemo}:{onDemo:()=>void}) {
             <h3 className="font-serif text-2xl font-bold text-bark mb-2">Free</h3>
             <div className="flex items-baseline gap-1 mb-6"><span className="font-serif text-5xl font-black text-bark">$0</span><span className="text-bark-light text-sm">forever</span></div>
             {free.map(f=><div key={f} className="flex items-start gap-2.5 mb-3"><span className="text-green-700 mt-0.5 flex-shrink-0 text-sm">✓</span><span className="text-bark-light text-sm">{f}</span></div>)}
-<button
-  onClick={onDemo}
-  className="mt-5 w-full py-3 rounded-lg bg-green-900 text-white font-bold text-sm hover:bg-green-800 transition-colors"
+<a
+  href="/register"
+  className="mt-5 w-full py-3 rounded-lg bg-green-900 text-white font-bold text-sm hover:bg-green-800 transition-colors block text-center"
 >
   Start Free
-</button> </div>
+</a> </div>
             <div className="relative bg-forest border-2 border-yellow-400 rounded-2xl p-9">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-800 text-white text-xs font-bold tracking-widest px-4 py-1 rounded-full whitespace-nowrap">30% OFF</div>
             <h3 className="font-serif text-2xl font-bold text-white mb-2">Pro</h3>
             <div className="flex items-baseline gap-1.5 mb-1"><span className="font-serif text-5xl font-black text-yellow-400">$7</span><span className="text-white/50 text-sm">/month</span></div>
             <div className="text-white/40 text-xs mb-6">Regular price: <span className="line-through">$10/month</span></div>
             {pro.map(f=><div key={f} className="flex items-start gap-2.5 mb-3"><span className="text-yellow-400 mt-0.5 flex-shrink-0 text-sm">✓</span><span className="text-white/80 text-sm">{f}</span></div>)}
-            <button onClick={onDemo} className="mt-5 w-full py-3 rounded-lg bg-yellow-600 text-white font-bold text-sm hover:bg-yellow-500 transition-colors">Start 3-Day Free Trial</button>
+            <a href="/register" className="mt-5 w-full py-3 rounded-lg bg-yellow-600 text-white font-bold text-sm hover:bg-yellow-500 transition-colors block text-center">Start 3-Day Free Trial</a>
           </div>
         </div>
         <p className="text-center text-bark-light text-xs mt-5">

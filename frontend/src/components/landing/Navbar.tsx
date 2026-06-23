@@ -1,6 +1,6 @@
 import { useAuth } from '../../context/AuthContext'
 
-export default function Navbar({ onDemo }: { onDemo: () => void }) {
+export default function Navbar() {
   const { user, logout, isLoading } = useAuth()
 
   return (
@@ -10,14 +10,6 @@ export default function Navbar({ onDemo }: { onDemo: () => void }) {
       </a>
 
       <div className="flex gap-2 items-center">
-        {/* Keep Try Demo for quick access to the writing practice page */}
-        <button
-          onClick={onDemo}
-          className="hidden sm:block text-white/70 text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          Try Demo
-        </button>
-
         {isLoading ? null : user ? (
           // ── Logged in ──
           <>

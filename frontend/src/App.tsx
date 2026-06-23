@@ -9,7 +9,6 @@ import DashboardPage from './pages/DashboardPage'
 import LevelTestPage from './pages/LevelTestPage'
 import ReadingPracticePage from './pages/ReadingPracticePage'
 import GeneralReadingPage from './pages/GeneralReadingPage'
-import DemoPage from './pages/DemoPage'
 import PricingPage from './pages/PricingPage'
 import GrammarPracticePage from './pages/GrammarPracticePage'
 import IELTSPage from './pages/IELTSPage'
@@ -51,7 +50,6 @@ function Router() {
   if (path === '/profile')    return <ProfilePage />
   if (path === '/dashboard')  return <DashboardPage />
   if (path === '/level-test') return <LevelTestPage />
-  if (path === '/demo')       return <DemoPage />
   if (path === '/pricing')    return <PricingPage />
   if (path === '/grammar')    return <GrammarPracticePage />
   if (path === '/ielts')                      return <IELTSPage />
@@ -69,7 +67,7 @@ function Router() {
   if (path === '/verify-email')    return <VerifyEmailPage />
   if (path === '/forgot-password') return <ForgotPasswordPage />
   if (path === '/reset-password')  return <ResetPasswordPage />
-  return <Landing onDemo={() => navigate('/demo')} />
+  return <Landing />
 }
 
 export default function App() {

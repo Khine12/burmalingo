@@ -1,5 +1,4 @@
-interface HeroProps { onDemo: () => void }
-export default function Hero({ onDemo }: HeroProps) {
+export default function Hero() {
   return (
     <div className="relative overflow-hidden text-center px-7 py-24" style={{background:'linear-gradient(165deg,#0D2B1E 0%,#1B4332 60%,#163827 100%)'}}>
       <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-yellow-600/20 pointer-events-none"/>
@@ -12,7 +11,7 @@ export default function Hero({ onDemo }: HeroProps) {
         Grammar explained in Burmese. Spaced repetition vocabulary. AI writing and speaking feedback — built by a Burmese immigrant who studied English before arriving in the US, and learned what real-world fluency actually takes after 3 years of living it.
       </p>
       <div className="flex gap-2.5 justify-center flex-wrap">
-        <button onClick={onDemo} className="bg-yellow-600 text-white font-bold px-7 py-4 rounded-lg text-base hover:-translate-y-0.5 transition-transform">Try It Free →</button>
+        <a href="/register" className="bg-yellow-600 text-white font-bold px-7 py-4 rounded-lg text-base hover:-translate-y-0.5 transition-transform">Try It Free →</a>
         <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({behavior:'smooth'})} className="bg-white/10 text-white/85 font-medium px-7 py-4 rounded-lg border border-white/20 text-base hover:bg-white/15 transition-colors">How It Works</button>
       </div>
     </div>
